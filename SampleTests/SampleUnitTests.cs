@@ -2,7 +2,7 @@ using System;
 using NUnit.Framework;
 using TestFramework;
 
-namespace TestFramework.UnitTests
+namespace SampleUnitTests
 {
     [TestFixture]
     class UnitTests : TestCase
