@@ -1,29 +1,12 @@
-
 namespace TestFramework
 {
-    public enum DelimiterType
-    {
-        Distance,
-        Time
-    }
-
-    public enum Operator
-    {
-        Lower,
-        Greater,
-        Equals
-    }
-
     public class TestSegment
     {
         double m_start;
         double m_end;
-        Operator m_operator;
         DelimiterType m_type;
-        string m_property;
 
-
-        public TestSegment(double start, double end, string property, Operator op, DelimiterType dt = DelimiterType.Distance)
+        public TestSegment(double start, double end, DelimiterType dt = DelimiterType.Distance)
         {
             if (start >= end)
             {
@@ -31,8 +14,6 @@ namespace TestFramework
             }
             m_start = start;
             m_end = end;
-            m_property = property;
-            m_operator = op;
             m_type = dt;
         }
 
