@@ -6,6 +6,7 @@ namespace TestFramework
         Operator m_Operator;
         string m_Property;
         double m_Value;
+        // TODO data to test
 
         public SegmentCondition(TestSegment testSegment, Operator op, string property, double value)
         {
