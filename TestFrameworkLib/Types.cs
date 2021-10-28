@@ -7,9 +7,15 @@ namespace TestFramework
         Equals
     }
 
-        public enum DelimiterType
+        public enum SegmentType
     {
         Distance,
         Time
+    }
+
+    public static struct Header // find names
+    {
+        public const string v_act = "v_act [km/h]";
+        // ETC
     }
 }
