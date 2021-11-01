@@ -3,28 +3,37 @@ namespace TestFramework
 {
     public class SegmentCondition
     {
-        public TestSegment m_Segment {get; set;}
-        public Operator m_Operator {get; set;}
-        public string m_Property {get; set;}
-        public double m_Value {get; set;}
-        public bool m_Passed {get; set;}
+        public TestSegment Segment {get; set;}
+        public Operator Operator {get; set;}
+        public string Property {get; set;}
+        public double Value {get; set;}
+        public bool Passed {get; set;}
 
         public SegmentCondition(TestSegment testSegment, string property, Operator op, double value)
         {
-            m_Segment = testSegment;
-            m_Operator = op;
-            m_Property = property;
-            m_Value = value;
-            m_Passed = false;
+            this.Segment = testSegment;
+            this.Operator = op;
+            this.Property = property;
+            this.Value = value;
+            this.Passed = false;
         }
 
-        public bool check()
+        public void check()
         {
-            foreach(var dataLine in m_Segment.m_Data)
+            foreach(var dataLine in this.Segment.Data)
             {
-                Utils.ApplyOperator(dataLine[m_Property], m_Operator, m_Value, this.GenerateFailMessage(dataLine[m_Property]));
+                try
+                {
+                    Utils.ApplyOperator(dataLine[this.Property], this.Operator, this.Value, this.GenerateFailMessage(dataLine[this.Property]));
+                }
+                catch(Exception e)
+                {
+                    _ = e;
+                    this.Passed = false;
+                    return;
+                }
             }
-            return true;
+            this.Passed = true;
         }
 
         public void print()
@@ -32,19 +41,19 @@ namespace TestFramework
             Console.Write("Segment Condition: {0}\n", this.ToString());
         }
 
-        public string ToString()
+        public override string ToString()
         {
-            return string.Format("[{0}, {1}, {2}, {3}]", m_Segment.ToString(), m_Property, m_Operator, m_Value);
+            return string.Format("[{0}, {1}, {2}, {3}]", this.Segment.ToString(), this.Property, this.Operator, this.Value);
         }
 
         private string GenerateFailMessage(double lhs)
         {
-            return string.Format("Fail: Expected '{0}' {1} {2}. Got: {3}", m_Property, Utils.Symbol(m_Operator), m_Value, lhs);
+            return string.Format("Fail: Expected '{0}' {1} {2}. Got: {3}", this.Property, Utils.Symbol(this.Operator), this.Value, lhs);
         }
 
         private string GeneratePassMessage(double lhs)
         {
-            return string.Format("Pass: Expected '{0}' {1} {2}. Got: {3}", m_Property, Utils.Symbol(m_Operator), m_Value, lhs);
+            return string.Format("Pass: Expected '{0}' {1} {2}. Got: {3}", this.Property, Utils.Symbol(this.Operator), this.Value, lhs);
         }
     }
 }

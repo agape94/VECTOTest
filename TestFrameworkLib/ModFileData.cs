@@ -17,6 +17,11 @@ namespace TestFramework
 
         public List<DataRow> GetTestData(double start, double end, string column, SegmentType st = SegmentType.Distance)
         {
+            if (start > end)
+            {
+                throw new System.ArgumentException(string.Format("start delimeter ({0}) greater than end delimeter ({1})", start, end));
+            }
+
             List<DataRow> testData = new List<DataRow>();
             string rangeType = st == SegmentType.Distance ? ModFileHeader.dist : ModFileHeader.time;
 
@@ -44,8 +49,6 @@ namespace TestFramework
 
         public bool ParseCsv(string path)
         {
-            // Console.WriteLine("Reading modfile at: " + path);
-
             // read all lines from the file
             string[] lines = System.IO.File.ReadAllLines(path);   
 
@@ -97,7 +100,6 @@ namespace TestFramework
                     catch (FormatException) 
                     {
                         field_val = 0;
-                        // Console.Error.WriteLine("Unable to convert field '{0}' value: '{1}' to a Double. Assigning value '0'.", hf.Header, hf.Field);
                     }
                     catch (OverflowException) 
                     {
@@ -108,7 +110,6 @@ namespace TestFramework
                 }
                 m_Data.Add(row);                
             }
-            // Console.WriteLine("Lines parsed: {0}", m_Data.Count);
             return true;
         }
     }
