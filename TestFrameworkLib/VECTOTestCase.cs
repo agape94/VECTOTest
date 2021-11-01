@@ -45,7 +45,9 @@ namespace TestFramework
         {
             foreach(var segmentCondition in m_Conditions)
             {
-                Console.WriteLine("{0} -> {1}", segmentCondition.ToString(), segmentCondition.Passed ? "Pass" : "Fail");
+                Console.WriteLine("{0} -> {1}", segmentCondition.ToString(), segmentCondition.Passed ? "✔ Pass" : "✗ Fail");
+                // string message = string.Format("{0} -> {1}", segmentCondition.ToString(), segmentCondition.Passed ? "[✔ Pass]" : "[✗ Fail]");
+                // Utils.WriteColor(message, ConsoleColor.Green);
             } 
         } 
 
