@@ -1,8 +1,7 @@
-using CsvHelper;
-using CsvHelper.Configuration.Attributes;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
+using System;
 namespace TestFramework
 {
     public class TestCase
@@ -25,12 +24,11 @@ namespace TestFramework
 
         private bool read_Csv(string path)
         {
-            using (var reader = new StreamReader(path))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-            {
-                var records = csv.GetRecords<dynamic>();
-                Console.WriteLine(records);
-            }
+            // string[] lines = System.IO.File.ReadAllLines(path);   
+            // Console.WriteLine(lines[1]);
+
+            ModFileData data = new ModFileData(path);
+
             return true;
         }
     }

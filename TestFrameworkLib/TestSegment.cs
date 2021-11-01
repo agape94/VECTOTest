@@ -4,9 +4,9 @@ namespace TestFramework
     {
         double m_start;
         double m_end;
-        DelimiterType m_type;
+        SegmentType m_type;
 
-        public TestSegment(double start, double end, DelimiterType dt = DelimiterType.Distance)
+        public TestSegment(double start, double end, SegmentType dt = SegmentType.Distance)
         {
             if (start >= end)
             {
