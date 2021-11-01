@@ -15,7 +15,6 @@ namespace TestFramework
             // TODO extract information from expected and create TestSegments with SegmentConditions
 
             m_Data = new ModFileData();
-
             Assert.True(m_Data.ParseCsv(jobname));
         }
 

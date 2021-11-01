@@ -18,10 +18,38 @@ namespace TestFramework
             m_Data = new List<DataRow>();
         }
 
+        public List<DataRow> GetTestData(double start, double end, string column, SegmentType st = SegmentType.Distance)
+        {
+            List<DataRow> testData = new List<DataRow>();
+            string rangeType = st == SegmentType.Distance ? ModFileHeader.dist : ModFileHeader.time;
+
+            foreach(var line in m_Data)
+            {
+                if(line[rangeType] <= start)
+                {
+                    continue;
+                }
+                else if(line[rangeType] >= start && line[rangeType] <= end) 
+                {
+                    DataRow row = new DataRow();
+                    row.Add(rangeType, row[rangeType]);
+                    row.Add(column, row[column]);
+
+                    testData.Add(row);
+                }
+                else if(line[rangeType] >= end)
+                {
+                    break;
+                }
+            }
+
+            return testData;
+        }
+
         public bool ParseCsv(string path)
         {
             Console.WriteLine("Reading modfile at: " + path);
-            
+
             // read all lines from the file
             string[] lines = System.IO.File.ReadAllLines(path);   
 
@@ -82,8 +110,7 @@ namespace TestFramework
                     }
                     row.Add(hf.Header, field_val);
                 }
-                m_Data.Add(row);
-                
+                m_Data.Add(row);                
             }
             Console.WriteLine("Lines parsed: {0}", m_Data.Count);
             return true;
