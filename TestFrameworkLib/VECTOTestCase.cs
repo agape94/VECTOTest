@@ -4,12 +4,12 @@ using System.IO;
 using System;
 namespace TestFramework
 {
-    public class TestCase
+    public class VECTOTestCase
     {
         private List<SegmentCondition> m_Conditions;
         private ModFileData m_Data;
 
-        public TestCase(string jobname, params (double start, double end, string property, Operator op, double value)[] expected)
+        public VECTOTestCase(string jobname, params (double start, double end, string property, Operator op, double value)[] expected)
         {
             m_Data = new ModFileData();
             m_Conditions = new List<SegmentCondition>();
