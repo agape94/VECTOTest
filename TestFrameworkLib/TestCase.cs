@@ -7,13 +7,16 @@ namespace TestFramework
     public class TestCase
     {
         List<SegmentCondition> m_Conditions;
+        ModFileData m_Data;
         public TestCase(string jobname, params (double start, double end, string property, Operator op, double value)[] expected)
         {
             // Console.WriteLine("Running test case");
 
             // TODO extract information from expected and create TestSegments with SegmentConditions
 
-            Assert.True(read_Csv(jobname));
+            m_Data = new ModFileData();
+
+            Assert.True(m_Data.ParseCsv(jobname));
         }
 
         public bool check()
@@ -22,14 +25,5 @@ namespace TestFramework
             return true;
         }
 
-        private bool read_Csv(string path)
-        {
-            // string[] lines = System.IO.File.ReadAllLines(path);   
-            // Console.WriteLine(lines[1]);
-
-            ModFileData data = new ModFileData(path);
-
-            return true;
-        }
     }
 }

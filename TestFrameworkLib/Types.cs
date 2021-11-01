@@ -1,3 +1,7 @@
+using System.Reflection;
+using System;
+using System.Collections.Generic;
+
 namespace TestFramework
 {
     public enum Operator
@@ -13,8 +17,38 @@ namespace TestFramework
         Time
     }
 
-    public static class ModFileHeader
+    public static class Utils
     {
+        public static bool IsValidHeader(string header_to_check)
+        {
+            var headers = GetHeaders();
+            foreach(var header in headers)
+            {
+                if(header_to_check == header)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static List<string> GetHeaders()
+        {
+            List<string> headers = new List<string>();
+
+            Type type = typeof (ModFileHeader);
+            var fields = type.GetFields(BindingFlags.Static | BindingFlags.Public);
+
+            foreach (FieldInfo field in fields)
+            {
+                var fieldValue = (string)field.GetValue(null);
+                headers.Add(fieldValue);
+            }
+            return headers;
+        }
+    }
+    public static class ModFileHeader
+    {   
         public static string    time               = "time [s]";
         public static string    dt                 = "dt [s]";
         public static string    dist               = "dist [m]";
