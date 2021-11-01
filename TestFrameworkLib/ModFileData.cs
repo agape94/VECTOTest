@@ -3,12 +3,9 @@ using System;
 using System.Linq;
 using System.IO;
 using System.Data;
-using NUnit.Framework;
 
 namespace TestFramework
-{
-    using DataRow = Dictionary<string, double>;
-    
+{    
     public class ModFileData
     {
         private List<DataRow> m_Data;
@@ -25,22 +22,21 @@ namespace TestFramework
 
             foreach(var line in m_Data)
             {
-                if(line[rangeType] <= start)
+                // we assume that the test data is already sorted
+                if(line[rangeType] < start)
                 {
                     continue;
                 }
-                else if(line[rangeType] >= start && line[rangeType] <= end) 
-                {
-                    DataRow row = new DataRow();
-                    row.Add(rangeType, row[rangeType]);
-                    row.Add(column, row[column]);
-
-                    testData.Add(row);
-                }
-                else if(line[rangeType] >= end)
+                else if(line[rangeType] > end)
                 {
                     break;
                 }
+                
+                DataRow row = new DataRow();
+                row.Add(rangeType, line[rangeType]);
+                row.Add(column, line[column]);
+
+                testData.Add(row);
             }
 
             return testData;
@@ -48,7 +44,7 @@ namespace TestFramework
 
         public bool ParseCsv(string path)
         {
-            Console.WriteLine("Reading modfile at: " + path);
+            // Console.WriteLine("Reading modfile at: " + path);
 
             // read all lines from the file
             string[] lines = System.IO.File.ReadAllLines(path);   
@@ -112,7 +108,7 @@ namespace TestFramework
                 }
                 m_Data.Add(row);                
             }
-            Console.WriteLine("Lines parsed: {0}", m_Data.Count);
+            // Console.WriteLine("Lines parsed: {0}", m_Data.Count);
             return true;
         }
     }

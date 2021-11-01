@@ -1,9 +1,12 @@
 using System.Reflection;
 using System;
 using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace TestFramework
 {
+    public class DataRow : Dictionary<string, double> {}
+
     public enum Operator
     {
         Lower,
@@ -46,7 +49,38 @@ namespace TestFramework
             }
             return headers;
         }
+
+        public static void ApplyOperator(double lhs, Operator op, double rhs, string errorMessage = "")
+        {
+            switch(op)
+            {
+                case Operator.Lower:
+                    Assert.That(lhs, Is.LessThan(rhs), errorMessage);
+                    break;
+                case Operator.Greater:
+                    Assert.That(lhs, Is.GreaterThan(rhs), errorMessage);
+                    break;
+                case Operator.Equals:
+                    Assert.That(lhs, Is.EqualTo(rhs), errorMessage);
+                    break;
+            }
+        }
+
+        public static string Symbol(Operator op, bool inverse=false)
+        {
+            switch(op)
+            {
+                case Operator.Lower:
+                    return inverse ? ">=" : "<";
+                case Operator.Greater:
+                    return inverse ? "<=" : ">";
+                case Operator.Equals:
+                    return inverse ? "!=" : "=";
+            }
+            return "";
+        }
     }
+
     public static class ModFileHeader
     {   
         public static string    time               = "time [s]";

@@ -8,7 +8,6 @@ namespace TestFramework
         public void Test(string jobname, params (double start, double end, string property, Operator op, double value)[] expected)
         {
             var test_case = new TestCase(jobname, expected);
-            Assert.True(test_case.check());
         }
     }
 }
