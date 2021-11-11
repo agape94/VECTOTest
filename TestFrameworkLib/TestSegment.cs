@@ -4,30 +4,24 @@ namespace TestFramework
 {
     public class TestSegment
     {
-        public double Start {get; set;}
-        public double End {get; set;}
-        public SegmentType Type {get; set;}
-        public List<DataRow> Data {get; set;}
+        public double Start { get; set; }
+        public double End { get; set; }
+        public SegmentType Type { get; set; }
+        public List<DataRow> Data { get; set; }
 
         public TestSegment(double start, double end, List<DataRow> testData, SegmentType dt = SegmentType.Distance)
         {
-            if (start > end)
-            {
-                throw new System.ArgumentException(string.Format("start delimeter ({0}) greater than end delimeter ({1})", start, end));
+            if (start > end) {
+                throw new ArgumentException($"start delimiter ({start}) greater than end delimiter ({end})");
             }
-            this.Start = start;
-            this.End = end;
-            this.Type = dt;
-            this.Data = testData;
-        }
-        public void print()
-        {
-            Console.Write("{0}", this.ToString());
+            Start = start;
+            End = end;
+            Type = dt;
+            Data = testData;
         }
 
-        public override string ToString() 
-        {
-            return string.Format("({0}, {1}, {2})", this.Start, this.End, this.Type);
-        }
+        public void print() => Console.Write("{0}", ToString());
+
+        public override string ToString() => $"({Start}, {End}, {Type})";
     }
 }

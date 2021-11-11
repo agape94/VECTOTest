@@ -21,12 +21,12 @@ namespace TestFramework
 
         public static List<string> GetHeaders()
         {
-            List<string> headers = new List<string>();
+            var headers = new List<string>();
 
-            Type type = typeof (ModFileHeader);
+            var type = typeof (ModFileHeader);
             var fields = type.GetFields(BindingFlags.Static | BindingFlags.Public);
 
-            foreach (FieldInfo field in fields)
+            foreach (var field in fields)
             {
                 var fieldValue = (string)field.GetValue(null);
                 headers.Add(fieldValue);

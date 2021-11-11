@@ -4,112 +4,96 @@ using System.Linq;
 using System.IO;
 
 namespace TestFramework
-{    
-    public class ModFileData
-    {
-        private List<DataRow> m_Data;
+{
+	public class ModFileData
+	{
+		private List<DataRow> m_Data;
 
-        public ModFileData()
-        {
-            m_Data = new List<DataRow>();
-        }
+		public ModFileData()
+		{
+			m_Data = new List<DataRow>();
+		}
 
-        public List<DataRow> GetTestData(double start, double end, string column, SegmentType st = SegmentType.Distance)
-        {
-            if (start > end)
-            {
-                throw new System.ArgumentException(string.Format("start delimeter ({0}) greater than end delimeter ({1})", start, end));
-            }
+		public List<DataRow> GetTestData(double start, double end, string column, SegmentType st = SegmentType.Distance)
+		{
+			if (start > end) {
+				throw new ArgumentException($"start delimiter ({start}) greater than end delimiter ({end})");
+			}
 
-            List<DataRow> testData = new List<DataRow>();
-            string rangeType = st == SegmentType.Distance ? ModFileHeader.dist : ModFileHeader.time;
+			var testData = new List<DataRow>();
+			var rangeType = st == SegmentType.Distance ? ModFileHeader.dist : ModFileHeader.time;
 
-            foreach(var line in m_Data)
-            {
-                // we assume that the test data is already sorted
-                if(line[rangeType] < start)
-                {
-                    continue;
-                }
-                else if(line[rangeType] > end)
-                {
-                    break;
-                }
-                
-                DataRow row = new DataRow();
-                row.Add(rangeType, line[rangeType]);
-                row.Add(column, line[column]);
+			foreach (var line in m_Data) {
+				// we assume that the test data is already sorted
+				if (line[rangeType] < start) {
+					continue;
+				} else if (line[rangeType] > end) {
+					break;
+				}
 
-                testData.Add(row);
-            }
+				var row = new DataRow {
+					{ rangeType, line[rangeType] },
+					{ column, line[column] }
+				};
 
-            return testData;
-        }
+				testData.Add(row);
+			}
 
-        public bool ParseCsv(string path)
-        {
-            // read all lines from the file
-            string[] lines = System.IO.File.ReadAllLines(path);   
+			return testData;
+		}
 
-            int index = 0;
+		public bool ParseCsv(string path)
+		{
+			// read all lines from the file
+			var lines = File.ReadAllLines(path);
 
-            if (lines[0].StartsWith("#"))
-            {
-                index = 1;
-            }
+			var index = 0;
 
-            string headers_line = lines[index];
-            string[] headers = headers_line.Split(',');
+			if (lines[0].StartsWith("#")) {
+				index = 1;
+			}
 
-            foreach(string header in headers)
-            {
-                // check if the headers found in the mod file match the ones defined in Types.ModFileHeader class
-                if (Utils.IsValidHeader(header) == false)
-                {
-                    Console.Error.WriteLine("Column '{0}' is not defined in Types.ModFileHeaders class.", header);
-                    return false;
-                }
-            }
+			var headers_line = lines[index];
+			var headers = headers_line.Split(',');
 
-            index ++;
+			foreach (var header in headers) {
+				// check if the headers found in the mod file match the ones defined in Types.ModFileHeader class
+				if (Utils.IsValidHeader(header) == false) {
+					Console.Error.WriteLine("Column '{0}' is not defined in Types.ModFileHeaders class.", header);
+					return false;
+				}
+			}
 
-            for(int line_idx = index ; line_idx < lines.Length ; line_idx++)
-            {
-                // Read data 
-                DataRow row = new DataRow();
+			index++;
 
-                string line = lines[line_idx];
-                string[] fields = line.Split(',');
+			for (var line_idx = index; line_idx < lines.Length; line_idx++) {
+				// Read data 
+				var row = new DataRow();
 
-                if(headers.Length != fields.Length)
-                {
-                    Console.Error.WriteLine("headers.Length != fields.Length");
-                    return false;
-                }
+				var line = lines[line_idx];
+				var fields = line.Split(',');
 
-                var headersAndFields = headers.Zip(fields, (h, f) => new { Header = h, Field = f });
-                foreach(var hf in headersAndFields)
-                {
-                    double field_val = 0;
+				if (headers.Length != fields.Length) {
+					Console.Error.WriteLine("headers.Length != fields.Length");
+					return false;
+				}
 
-                    try 
-                    {
-                        field_val = Convert.ToDouble(hf.Field);
-                    }
-                    catch (FormatException) 
-                    {
-                        field_val = 0;
-                    }
-                    catch (OverflowException) 
-                    {
-                        Console.Error.WriteLine("field '{0}' value: '{1}' is outside the range of a Double.", hf.Header, hf.Field);
-                        return false;
-                    }
-                    row.Add(hf.Header, field_val);
-                }
-                m_Data.Add(row);                
-            }
-            return true;
-        }
-    }
+				var headersAndFields = headers.Zip(fields, (h, f) => new { Header = h, Field = f });
+				foreach (var hf in headersAndFields) {
+					double field_val;
+					try {
+						field_val = Convert.ToDouble(hf.Field);
+					} catch (FormatException) {
+						field_val = 0;
+					} catch (OverflowException) {
+						Console.Error.WriteLine("field '{0}' value: '{1}' is outside the range of a Double.", hf.Header, hf.Field);
+						return false;
+					}
+					row.Add(hf.Header, field_val);
+				}
+				m_Data.Add(row);
+			}
+			return true;
+		}
+	}
 }

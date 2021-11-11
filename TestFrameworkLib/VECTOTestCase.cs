@@ -20,7 +20,7 @@ namespace TestFramework
                 // Console.WriteLine("Start: {0}\nEnd: {1}\nProperty: {2}\nOperator:{3},\nValue to Compare: {4}", exp.start, exp.end, exp.property, exp.op, exp.value);
 
                 try{
-                    List<DataRow> testData = m_Data.GetTestData(exp.start, exp.end, exp.property);
+                    var testData = m_Data.GetTestData(exp.start, exp.end, exp.property);
                     m_Conditions.Add(new SegmentCondition(new TestSegment(exp.start, exp.end, testData), exp.property, exp.op, exp.value));
                 }
                 catch(Exception e)
@@ -29,8 +29,8 @@ namespace TestFramework
                 }
             }
 
-            this.CheckAllSegmentConditions();
-            this.PrintResults();
+            CheckAllSegmentConditions();
+            PrintResults();
         }
 
         public void CheckAllSegmentConditions()
@@ -45,7 +45,7 @@ namespace TestFramework
         {
             foreach(var segmentCondition in m_Conditions)
             {
-                Console.WriteLine("{0} -> {1}", segmentCondition.ToString(), segmentCondition.Passed ? "✔ Pass" : "✗ Fail");
+                Console.WriteLine("{0} -> {1}", segmentCondition, segmentCondition.Passed ? "✔ Pass" : "✗ Fail");
                 // string message = string.Format("{0} -> {1}", segmentCondition.ToString(), segmentCondition.Passed ? "[✔ Pass]" : "[✗ Fail]");
                 // Utils.WriteColor(message, ConsoleColor.Green);
             } 
