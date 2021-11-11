@@ -35,10 +35,10 @@ namespace TestFramework
 
         public override string ToString() => $"[{Segment}, {Property}, {Operator}, {Value}]";
 
-        private string GenerateFailMessage(double lhs) => 
+        private string GenerateFailMessage(double lhs) =>
             $"Fail: Expected '{Property}' {Utils.Symbol(Operator)} {Value}. Got: {lhs}";
 
-        private string GeneratePassMessage(double lhs) => 
+        private string GeneratePassMessage(double lhs) =>
             $"Pass: Expected '{Property}' {Utils.Symbol(Operator)} {Value}. Got: {lhs}";
     }
 }
