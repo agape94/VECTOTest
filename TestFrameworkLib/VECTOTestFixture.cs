@@ -1,7 +1,3 @@
-using System;
-using System.Reflection;
-using NUnit.Framework;
-
 namespace TestFramework
 {
     public class VECTOTestFixture
