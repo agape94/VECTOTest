@@ -1,4 +1,7 @@
 
 TODO list
-* Rename TestFixture/TestCase.. to some other things to avoid name clashes
-* Keep track of columns in enums
+* Provide functionality to ignore certain values
+    * maybe extend the Operators to allow certain values or Between
+    * ex: Gear > 3 and Gear < 5 -> 0 should be allowed
+* Derive out of the ModFile certain rules
+    * Ex: PCC 
