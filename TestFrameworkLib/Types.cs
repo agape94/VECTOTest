@@ -8,7 +8,17 @@ namespace TestFramework
     {
         Lower,
         Greater,
-        Equals
+        Equals,
+        MinMax,
+        ValueSet,
+        /*
+            Analyze_* is a placeholder for now
+        */
+        Analyze_Lower,
+        Analyze_Greater,
+        Analyze_Equals,
+        Analyze_MinMax,
+        Analyze_ValueSet
     }
 
     public enum SegmentType
