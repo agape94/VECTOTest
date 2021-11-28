@@ -46,25 +46,25 @@ namespace TestFramework
             }
         }
 
-        public static IOperator OperatorFactoryMethod(Operator op)
-        {
-            IOperator concreteOperator;
-            switch (op) {
-                case Operator.Lower:
-                    concreteOperator = new LowerOperator();
-                    break;
-                case Operator.Greater:
-                    concreteOperator = new GreaterOperator();
-                    break;
-                case Operator.Equals:
-                    concreteOperator = new EqualsOperator();
-                    break;
-                default:
-                    return new EqualsOperator(); // TODO Place holder for now
-            }
+        // public static IOperator OperatorFactoryMethod(Operator op)
+        // {
+        //     IOperator concreteOperator;
+        //     switch (op) {
+        //         case Operator.Lower:
+        //             concreteOperator = new LowerOperator();
+        //             break;
+        //         case Operator.Greater:
+        //             concreteOperator = new GreaterOperator();
+        //             break;
+        //         case Operator.Equals:
+        //             concreteOperator = new EqualsOperator();
+        //             break;
+        //         default:
+        //             return new EqualsOperator(); // TODO Place holder for now
+        //     }
 
-            return concreteOperator;
-        }
+        //     return concreteOperator;
+        // }
 
         public static SegmentCondition SegmentConditionFactoryMethod(Operator op, TestSegment testSegment, string property, double value)
         {
@@ -105,79 +105,6 @@ namespace TestFramework
             }
 
             return sc;
-        }
-
-        // public static List<SegmentCondition> GetCorrectTestSegments(SegmentCondition condition)
-        // {
-        //     bool areAllEqual = true;
-        //     double maxValue = double.MinValue;
-        //     double minValue = double.MaxValue;
-        //     double oldValue = condition.Segment.Data[0][condition.Property];
-
-        //     foreach (var dataLine in condition.Segment.Data)
-        //     {
-        //         double actualValue = dataLine[condition.Property];
-        //         if(oldValue != actualValue && areAllEqual)
-        //         {
-        //             areAllEqual = false;
-        //         }
-
-        //         if(actualValue > maxValue)
-        //         {
-        //             maxValue = actualValue;
-        //         }
-        //         else if(actualValue < minValue)
-        //         {
-        //             minValue = actualValue;
-        //         }
-        //         oldValue = actualValue;
-        //     }
-
-        //     if(areAllEqual)
-        //     {
-        //         // return (start, end, Property, Equals, oldValue)
-        //         SegmentCondition sc = new SegmentCondition(
-        //             condition.Segment,
-        //             condition.Property,
-        //             new EqualsOperator(),
-        //             oldValue
-        //             );
-
-        //         return new List<SegmentCondition>(){sc}; 
-        //     }
-        //     else
-        //     {
-        //         // return (start, end, Property, Greater, minValue), (start, end, Property, Lower, maxValue)
-        //         SegmentCondition sc_greater = new SegmentCondition(
-        //             condition.Segment,
-        //             condition.Property,
-        //             new GreaterOperator(),
-        //             minValue
-        //             );
-        //         SegmentCondition sc_lower = new SegmentCondition(
-        //             condition.Segment,
-        //             condition.Property,
-        //             new LowerOperator(),
-        //             maxValue
-        //             );
-
-        //         return new List<SegmentCondition>(){sc_greater, sc_lower}; 
-            
-        //     }
-
-        // }
-
-        public static string Symbol(Operator op, bool inverse = false)
-        {
-            switch (op) {
-                case Operator.Lower:
-                    return inverse ? ">=" : "<";
-                case Operator.Greater:
-                    return inverse ? "<=" : ">";
-                case Operator.Equals:
-                    return inverse ? "!=" : "=";
-            }
-            return "";
         }
 
         // // usage: WriteColor("This is my [message] with inline [color] changes.", ConsoleColor.Yellow);
