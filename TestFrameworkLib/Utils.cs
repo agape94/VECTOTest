@@ -46,6 +46,24 @@ namespace TestFramework
             }
         }
 
+        public static IOperator OperatorFactoryMethod(double lhs, Operator op, double rhs)
+        {
+            IOperator concreteOperator;
+            switch (op) {
+                case Operator.Lower:
+                    concreteOperator = new LowerOperator(lhs, rhs);
+                    break;
+                case Operator.Greater:
+                    concreteOperator = new GreaterOperator(lhs, rhs);
+                    break;
+                case Operator.Equals:
+                    concreteOperator = new EqualsOperator(lhs, rhs);
+                    break;
+            }
+
+            return concreteOperator;
+        }
+
         public static List<SegmentCondition> GetCorrectTestSegments(SegmentCondition condition)
         {
             bool areAllEqual = true;
