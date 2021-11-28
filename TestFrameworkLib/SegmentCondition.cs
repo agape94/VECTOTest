@@ -25,6 +25,16 @@ namespace TestFramework
                     Utils.ApplyOperator(dataLine[Property], Operator, Value, GenerateFailMessage(dataLine[Property]));
                 } catch (Exception) {
                     Passed = false;
+
+                    // In case of failure, output the actual(found or true) conditions
+                    // Ex: (0, 70, v_act, Lower/Greater/Equals, 50) fails => 
+                    // => the framework should output:
+                    // * In case v_act is always the same value in that interval:
+                    //      (0, 70, v_act, Equals, 70)
+                    // * In case there are multiple values, output the min/max values:
+                    //      (0, 70, v_act, Greater, 21)
+                    //      (0, 70, v_act, Lower, 120)
+
                     return;
                 }
             }
