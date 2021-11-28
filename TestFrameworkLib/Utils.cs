@@ -46,6 +46,66 @@ namespace TestFramework
             }
         }
 
+        public static List<SegmentCondition> GetCorrectTestSegments(SegmentCondition condition)
+        {
+            bool areAllEqual = true;
+            double maxValue = double.MinValue;
+            double minValue = double.MaxValue;
+            double oldValue = condition.Segment.Data[0][condition.Property];
+
+            foreach (var dataLine in condition.Segment.Data)
+            {
+                double actualValue = dataLine[condition.Property];
+                if(oldValue != actualValue && areAllEqual)
+                {
+                    areAllEqual = false;
+                }
+
+                if(actualValue > maxValue)
+                {
+                    maxValue = actualValue;
+                }
+                else if(actualValue < minValue)
+                {
+                    minValue = actualValue;
+                }
+                oldValue = actualValue;
+            }
+
+            if(areAllEqual)
+            {
+                // return (start, end, Property, Equals, oldValue)
+                SegmentCondition sc = new SegmentCondition(
+                    condition.Segment,
+                    condition.Property,
+                    Operator.Equals,
+                    oldValue
+                    );
+
+                return new List<SegmentCondition>(){sc}; 
+            }
+            else
+            {
+                // return (start, end, Property, Greater, minValue), (start, end, Property, Lower, maxValue)
+                SegmentCondition sc_greater = new SegmentCondition(
+                    condition.Segment,
+                    condition.Property,
+                    Operator.Greater,
+                    minValue
+                    );
+                SegmentCondition sc_lower = new SegmentCondition(
+                    condition.Segment,
+                    condition.Property,
+                    Operator.Lower,
+                    maxValue
+                    );
+
+                return new List<SegmentCondition>(){sc_greater, sc_lower}; 
+            
+            }
+
+        }
+
         public static string Symbol(Operator op, bool inverse = false)
         {
             switch (op) {

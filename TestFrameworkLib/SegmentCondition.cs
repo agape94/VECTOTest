@@ -26,6 +26,13 @@ namespace TestFramework
                 } catch (Exception) {
                     Passed = false;
 
+                    Console.Write("Condition `{0}` failed. Correct conditions:\n", this.ToString());
+
+                    foreach(var segmentCondition in Utils.GetCorrectTestSegments(this))
+                    {
+                        Console.WriteLine("\t{0},", segmentCondition.ToString());
+                    }
+
                     // TODO
                     // In case of failure, output the actual(found or true) conditions
                     // Ex: (0, 70, v_act, Lower/Greater/Equals, 50) fails => 
