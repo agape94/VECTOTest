@@ -46,26 +46,6 @@ namespace TestFramework
             }
         }
 
-        // public static IOperator OperatorFactoryMethod(Operator op)
-        // {
-        //     IOperator concreteOperator;
-        //     switch (op) {
-        //         case Operator.Lower:
-        //             concreteOperator = new LowerOperator();
-        //             break;
-        //         case Operator.Greater:
-        //             concreteOperator = new GreaterOperator();
-        //             break;
-        //         case Operator.Equals:
-        //             concreteOperator = new EqualsOperator();
-        //             break;
-        //         default:
-        //             return new EqualsOperator(); // TODO Place holder for now
-        //     }
-
-        //     return concreteOperator;
-        // }
-
         public static SegmentCondition SegmentConditionFactoryMethod(Operator op, TestSegment testSegment, string property, double value)
         {
             SegmentCondition sc;

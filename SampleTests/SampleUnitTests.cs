@@ -19,7 +19,7 @@ namespace SampleUnitTests
 
         [Test]
         public void CityBus_AT_PS_RegionalDelivery_Cycle6() => VECTOTestCase(@"mod_files/CityBus_AT_PS_RegionalDelivery.vmod",
-            (0, 1e6, ModFileHeader.v_act, Operator.Greater, 100)
+            (0, 1e6, ModFileHeader.v_act, Operator.Analyze_Greater, 100)
             // (50, 80, (ModFileHeader.v_act, ModFileHeader.Gear ...), Operator.Analyze) -> 
             // Ouput should be :
             //     (50, 60, ModFileHeader.v_act, Operator.Greater, 90),
