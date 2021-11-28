@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System;
+using System.Reflection;
 using System.Linq;
 using System.IO;
 
@@ -8,6 +9,8 @@ namespace TestFramework
 	public class ModFileData
 	{
 		private List<DataRow> m_Data;
+		// private Dictionary<string, string> m_ColumnValueToVariableName;
+		// private List<string> m_ColumnNames;
 
 		public ModFileData()
 		{
@@ -64,6 +67,8 @@ namespace TestFramework
 				}
 			}
 
+			// m_ColumnNames = headers;
+
 			index++;
 
 			for (var line_idx = index; line_idx < lines.Length; line_idx++) {
@@ -95,5 +100,48 @@ namespace TestFramework
 			}
 			return true;
 		}
+
+		public static List<string> GetModFileHeadersVariableNames()
+        {
+            var headers = new List<string>();
+
+            var type = typeof(ModFileHeader);
+            var fields = type.GetFields(BindingFlags.Static | BindingFlags.Public);
+
+            foreach (var field in fields) {
+                var fieldName = (string)field.Name;
+                fieldName = fieldName.Split(' ').Last();
+                headers.Add(type.Name + fieldName);
+            }
+            return headers;
+        }
+
+        public static string GetModFileHeaderVariableNameByValue(string value)
+        {
+            var type = typeof(ModFileHeader);
+            var fields = type.GetFields(BindingFlags.Static | BindingFlags.Public);
+            foreach (var field in fields) {
+                var fieldValue = (string)field.GetValue(null);
+                if(value == fieldValue)
+                {
+                    return type.Name + "." + value;
+                }
+            }
+            return "";
+        } 
+
+        public static List<string> GetModFileHeaders()
+        {
+            var headers = new List<string>();
+
+            var type = typeof(ModFileHeader);
+            var fields = type.GetFields(BindingFlags.Static | BindingFlags.Public);
+
+            foreach (var field in fields) {
+                var fieldValue = (string)field.GetValue(null);
+                headers.Add(fieldValue);
+            }
+            return headers;
+        }
 	}
 }

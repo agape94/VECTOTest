@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -8,27 +10,13 @@ namespace TestFramework
     {
         public static bool IsValidHeader(string header_to_check)
         {
-            var headers = GetHeaders();
+            var headers = ModFileData.GetModFileHeaders();
             foreach (var header in headers) {
                 if (header_to_check == header) {
                     return true;
                 }
             }
             return false;
-        }
-
-        public static List<string> GetHeaders()
-        {
-            var headers = new List<string>();
-
-            var type = typeof(ModFileHeader);
-            var fields = type.GetFields(BindingFlags.Static | BindingFlags.Public);
-
-            foreach (var field in fields) {
-                var fieldValue = (string)field.GetValue(null);
-                headers.Add(fieldValue);
-            }
-            return headers;
         }
 
         public static void ApplyOperator(double lhs, Operator op, double rhs, string errorMessage = "")
@@ -81,7 +69,8 @@ namespace TestFramework
                     sc = new ValueSetSegmentCondition(testSegment, property, value, analyze:true);
                     break;
                 default:
-                    return new EqualsToSegmentCondition(testSegment, property, value); // TODO Place holder for now
+                    sc = new EqualsToSegmentCondition(testSegment, property, value); // TODO Place holder for now
+                    break;
             }
 
             return sc;
