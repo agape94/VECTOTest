@@ -1,17 +1,29 @@
-using System;
+using NUnit.Framework;
+
 namespace TestFramework
 {
     public class LowerOperator : IOperator
     {
-        public LowerOperator(double lhs, double rhs)
+        public LowerOperator() {}
+
+        public void Apply(double lhs, double rhs, string errorMessage = "")
         {
-            m_Lhs = lhs;
-            m_Rhs = rhs;
+            Assert.That(lhs, Is.LessThan(rhs), errorMessage);
         }
 
-        public void apply()
+        public string Symbol()
         {
-            Console.WriteLine("Lower operator...");
+            return "<";
+        }
+
+        public string InverseSymbol()
+        {
+            return ">=";
+        }
+
+        public override string ToString()
+        {
+            return "Lower";
         }
     }
 }

@@ -16,11 +16,13 @@ namespace TestFramework
             Assert.True(m_Data.ParseCsv(jobname));
 
             foreach (var exp in expected) {
-                // Console.WriteLine("Start: {0}\nEnd: {1}\nProperty: {2}\nOperator:{3},\nValue to Compare: {4}", exp.start, exp.end, exp.property, exp.op, exp.value);
-
                 try {
+                    
                     var testData = m_Data.GetTestData(exp.start, exp.end, exp.property);
-                    m_Conditions.Add(new SegmentCondition(new TestSegment(exp.start, exp.end, testData), exp.property, exp.op, exp.value));
+                    var testSegment = new TestSegment(exp.start, exp.end, testData);
+                    var segmentCondition = Utils.SegmentConditionFactoryMethod(exp.op, testSegment, exp.property, exp.value);
+                    m_Conditions.Add(segmentCondition);
+
                 } catch (Exception e) {
                     Console.Error.WriteLine(e.ToString());
                 }

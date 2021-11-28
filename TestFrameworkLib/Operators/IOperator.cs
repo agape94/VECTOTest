@@ -1,10 +1,11 @@
 
 namespace TestFramework
 {
-    interface IOperator
+    public interface IOperator
     {
-        double m_Lhs;
-        double m_Rhs;
-        void apply();
+        void Apply(double lhs, double rhs, string errorMessage = "");
+        string Symbol();
+        string InverseSymbol();
+        string ToString();
     };
 }

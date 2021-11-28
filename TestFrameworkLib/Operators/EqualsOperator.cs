@@ -1,17 +1,29 @@
-using System;
+using NUnit.Framework;
+
 namespace TestFramework
 {
     public class EqualsOperator : IOperator
     {
-        public EqualsOperator(double lhs, double rhs)
+        public EqualsOperator() {}
+
+        public void Apply(double lhs, double rhs, string errorMessage = "")
         {
-            m_Lhs = lhs;
-            m_Rhs = rhs;
+            Assert.That(lhs, Is.EqualTo(rhs), errorMessage);
         }
 
-        public void apply()
+        public string Symbol()
         {
-            Console.WriteLine("Equals operator...");
+            return "==";
+        }
+
+        public string InverseSymbol()
+        {
+            return "!=";
+        }
+
+        public override string ToString()
+        {
+            return "Equals";
         }
     }
 }
