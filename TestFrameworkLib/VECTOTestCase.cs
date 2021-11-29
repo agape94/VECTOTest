@@ -42,7 +42,15 @@ namespace TestFramework
         private void PrintResults()
         {
             foreach (var segmentCondition in m_Conditions) {
-                Console.WriteLine("{0} -> {1}", segmentCondition, segmentCondition.Passed ? "✔ Pass" : "✗ Fail");
+                if(!segmentCondition.Analyze)
+                {
+                    Console.WriteLine("{0} -> {1}", segmentCondition, segmentCondition.Passed ? "✔ Pass" : "✗ Fail");
+                }
+                
+                if(!segmentCondition.Passed)
+                {
+                    segmentCondition.PrintTrueConditions();
+                }
                 // string message = string.Format("{0} -> {1}", segmentCondition.ToString(), segmentCondition.Passed ? "[✔ Pass]" : "[✗ Fail]");
                 // Utils.WriteColor(message, ConsoleColor.Green);
             }

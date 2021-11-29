@@ -9,7 +9,7 @@ namespace TestFramework
         protected IOperator Operator { get; set; }
         protected string Property { get; set; }
         protected double Value { get; set; }
-        protected bool Analyze { get; set; }
+        public bool Analyze { get; }
         protected List<SegmentCondition> TrueConditions;
 
         public bool Passed { get; set; }
@@ -34,15 +34,16 @@ namespace TestFramework
                     } catch (Exception) {
                         Passed = false;
                         AnalyzeCondition();
-                        PrintTrueConditions();
+                        // PrintTrueConditions();
                         break;
                     }
                 }
             }
             else
             {
+                Passed = false;
                 AnalyzeCondition();
-                PrintTrueConditions();
+                // PrintTrueConditions();
             }
         }
 
@@ -87,9 +88,16 @@ namespace TestFramework
             }
         }
 
-        protected virtual void PrintTrueConditions()
+        public virtual void PrintTrueConditions()
         {
-            Console.Write("Condition `{0}` failed. Correct conditions:\n", this.ToString());
+            if(!Analyze)
+            {
+                Console.Write("Condition `{0}` failed. Correct conditions:\n", this.ToString());
+            }else
+            {
+                Console.Write("Analysis results for condition: `{0}`:\n", this.ToString());
+            }
+            
             foreach(var segmentCondition in TrueConditions)
             {
                 Console.WriteLine("\t{0},", segmentCondition.ToString());
