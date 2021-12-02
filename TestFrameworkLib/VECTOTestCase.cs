@@ -42,12 +42,8 @@ namespace TestFramework
         private void PrintResults()
         {
             foreach (var segmentCondition in m_Conditions) {
-                if(!segmentCondition.Analyze)
-                {
-                    Console.WriteLine("{0} -> {1}", segmentCondition, segmentCondition.Passed ? "✔ Pass" : "✗ Fail");
-                }
-                
-                if(!segmentCondition.Passed)
+                Console.WriteLine("{0} -> {1}", segmentCondition, segmentCondition.Passed ? "✔ Pass" : "✗ Fail");
+                if(!segmentCondition.Passed || segmentCondition.Analyze)
                 {
                     segmentCondition.PrintTrueConditions();
                 }

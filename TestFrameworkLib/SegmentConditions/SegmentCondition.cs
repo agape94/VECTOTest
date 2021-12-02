@@ -34,6 +34,7 @@ namespace TestFramework
                     } catch (Exception) {
                         Passed = false;
                         AnalyzeCondition();
+                        Console.WriteLine(dataLine[ModFileHeader.dist]);
                         // PrintTrueConditions();
                         break;
                     }
@@ -41,7 +42,6 @@ namespace TestFramework
             }
             else
             {
-                Passed = false;
                 AnalyzeCondition();
                 // PrintTrueConditions();
             }
