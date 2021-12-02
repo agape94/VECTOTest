@@ -122,9 +122,11 @@ namespace TestFramework
             var fields = type.GetFields(BindingFlags.Static | BindingFlags.Public);
             foreach (var field in fields) {
                 var fieldValue = (string)field.GetValue(null);
+				var fieldName = (string)field.Name;
+                fieldName = fieldName.Split(' ').Last();
                 if(value == fieldValue)
                 {
-                    return type.Name + "." + value;
+                    return type.Name + "." + fieldName;
                 }
             }
             return "";

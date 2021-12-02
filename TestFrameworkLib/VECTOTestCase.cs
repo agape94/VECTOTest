@@ -28,27 +28,28 @@ namespace TestFramework
                 }
             }
 
-            CheckAllSegmentConditions();
+            CheckOrAnalyzeSegmentConditions();
             PrintResults();
         }
 
-        public void CheckAllSegmentConditions()
+        public void CheckOrAnalyzeSegmentConditions()
         {
             foreach (var segmentCondition in m_Conditions) {
-                segmentCondition.check();
+                if(!segmentCondition.ToAnalyze)
+                {
+                    segmentCondition.Check();
+                }
+                else
+                {
+                    segmentCondition.Analyze();
+                }
             }
         }
 
         private void PrintResults()
         {
             foreach (var segmentCondition in m_Conditions) {
-                Console.WriteLine("{0} -> {1}", segmentCondition, segmentCondition.Passed ? "✔ Pass" : "✗ Fail");
-                if(!segmentCondition.Passed || segmentCondition.Analyze)
-                {
-                    segmentCondition.PrintTrueConditions();
-                }
-                // string message = string.Format("{0} -> {1}", segmentCondition.ToString(), segmentCondition.Passed ? "[✔ Pass]" : "[✗ Fail]");
-                // Utils.WriteColor(message, ConsoleColor.Green);
+                segmentCondition.PrintResults();
             }
         }
 

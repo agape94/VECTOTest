@@ -22,6 +22,16 @@ namespace TestFramework
 
         public void print() => Console.Write("{0}", ToString());
 
-        public override string ToString() => $"({Start}, {End}, {Type})";
+        public override string ToString() => $"{Start}, {End}";
+
+        public string TypeMeasuringUnit()
+        {
+            return Type == SegmentType.Distance ? "m" : "s";
+        }
+
+        public string TypePropertyName()
+        {
+            return Type == SegmentType.Distance ? ModFileHeader.dist : ModFileHeader.dt;
+        }
     }
 }

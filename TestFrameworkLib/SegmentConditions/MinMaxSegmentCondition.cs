@@ -4,7 +4,7 @@ namespace TestFramework
     {
         public MinMaxSegmentCondition(TestSegment testSegment, string property, double value, bool analyze=false) : base(testSegment, property, value, analyze) 
         {
-            Operator = new LowerOperator();
+            Operator = new LowerOperator(); // TODO currently placeholder
         }
     };
 }

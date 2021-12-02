@@ -9,8 +9,9 @@ namespace TestFramework
         protected IOperator Operator { get; set; }
         protected string Property { get; set; }
         protected double Value { get; set; }
-        public bool Analyze { get; }
+        public bool ToAnalyze { get; }
         protected List<SegmentCondition> TrueConditions;
+        protected double FailPoint { get; set; }
 
         public bool Passed { get; set; }
 
@@ -19,37 +20,29 @@ namespace TestFramework
             Segment = testSegment;
             Property = property;
             Value = value;
-            Analyze = analyze;
+            ToAnalyze = analyze;
             Passed = true;
             TrueConditions = new List<SegmentCondition>();
+            FailPoint = double.MinValue;
         }
 
-        public virtual void check()
+        public virtual void Check()
         {
-            if (!Analyze)
-            {
-                foreach (var dataLine in Segment.Data) {
-                    try {
-                        Operator.Apply(dataLine[Property], Value, GenerateFailMessage(dataLine[Property]));
-                    } catch (Exception) {
-                        Passed = false;
-                        AnalyzeCondition();
-                        Console.WriteLine(dataLine[ModFileHeader.dist]);
-                        // PrintTrueConditions();
-                        break;
-                    }
+            foreach (var dataLine in Segment.Data) {
+                try {
+                    FailPoint = dataLine[Segment.TypeColumnName()];
+                    Operator.Apply(dataLine[Property], Value, GenerateFailMessage(dataLine[Property]));
+                } catch (Exception) {
+                    Passed = false;
+                    Analyze();
+                    break;
                 }
             }
-            else
-            {
-                AnalyzeCondition();
-                // PrintTrueConditions();
-            }
         }
 
-        public virtual void print() => Console.Write("Segment Condition: {0}\n", ToString());
+        public virtual void Print() => Console.Write(ToString());
 
-        public virtual void AnalyzeCondition()
+        public virtual void Analyze()
         {
             TrueConditions.Clear();
 
@@ -90,12 +83,12 @@ namespace TestFramework
 
         public virtual void PrintTrueConditions()
         {
-            if(!Analyze)
+            if(!ToAnalyze)
             {
-                Console.Write("Condition `{0}` failed. Correct conditions:\n", this.ToString());
+                Console.Write("Condition `{0}` failed. Correct conditions:\n", ToString());
             }else
             {
-                Console.Write("Analysis results for condition: `{0}`:\n", this.ToString());
+                Console.Write("Analysis results for condition: `{0}`:\n", ToString());
             }
             
             foreach(var segmentCondition in TrueConditions)
@@ -104,10 +97,23 @@ namespace TestFramework
             }
         } 
 
-        public override string ToString() => $"[{Segment}, {Property}, {Operator}, {Value}]";
+        public virtual void PrintResults()
+        {
+            if(!ToAnalyze)
+            {
+                Console.WriteLine("{0} -> {1}", ToString(), Passed ? "✔ Pass" : "✗ Fail");
+                
+            }
+            if(!Passed || ToAnalyze)
+            {
+                PrintTrueConditions();
+            }
+        }
+
+        public override string ToString() => $"({Segment}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{Operator}, {Value})";
 
         public virtual string GenerateFailMessage(double lhs) =>
-            $"Fail: Expected '{Property}' {Operator.Symbol()} {Value}. Got: {lhs}";
+            $"Fail ({FailPoint}{Segment.TypeMeasuringUnit()}): Expected '{Property}' {Operator.Symbol()} {Value}, Got: {lhs}";
 
         public virtual string GeneratePassMessage(double lhs) =>
             $"Pass: Expected '{Property}' {Operator.Symbol()} {Value}. Got: {lhs}";
