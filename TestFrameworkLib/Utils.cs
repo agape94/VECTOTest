@@ -19,21 +19,6 @@ namespace TestFramework
             return false;
         }
 
-        public static void ApplyOperator(double lhs, Operator op, double rhs, string errorMessage = "")
-        {
-            switch (op) {
-                case Operator.Lower:
-                    Assert.That(lhs, Is.LessThan(rhs), errorMessage);
-                    break;
-                case Operator.Greater:
-                    Assert.That(lhs, Is.GreaterThan(rhs), errorMessage);
-                    break;
-                case Operator.Equals:
-                    Assert.That(lhs, Is.EqualTo(rhs), errorMessage);
-                    break;
-            }
-        }
-
         public static SegmentCondition SegmentConditionFactoryMethod(Operator op, TestSegment testSegment, string property, double value)
         {
             SegmentCondition sc;
@@ -75,27 +60,5 @@ namespace TestFramework
 
             return sc;
         }
-
-        // // usage: WriteColor("This is my [message] with inline [color] changes.", ConsoleColor.Yellow);
-        // public static void WriteColor(string message, ConsoleColor color)
-        // {
-        //     var pieces = Regex.Split(message, @"(\[[^\]]*\])");
-
-        //     for(int i=0;i<pieces.Length;i++)
-        //     {
-        //         string piece = pieces[i];
-
-        //         if (piece.StartsWith("[") && piece.EndsWith("]"))
-        //         {
-        //             Console.ForegroundColor = color;
-        //             piece = piece.Substring(1,piece.Length-2);          
-        //         }
-
-        //         Console.Write(piece);
-        //         Console.ResetColor();
-        //     }
-
-        //     Console.WriteLine();
-        // }
     }
 }
