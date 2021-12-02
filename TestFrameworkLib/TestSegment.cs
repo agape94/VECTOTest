@@ -29,7 +29,7 @@ namespace TestFramework
             return Type == SegmentType.Distance ? "m" : "s";
         }
 
-        public string TypePropertyName()
+        public string TypeColumnName()
         {
             return Type == SegmentType.Distance ? ModFileHeader.dist : ModFileHeader.dt;
         }
