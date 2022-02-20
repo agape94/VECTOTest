@@ -9,20 +9,16 @@ namespace TestFramework
         private List<SegmentCondition> m_Conditions;
         private ModFileData m_Data;
 
-        public VECTOTestCase(string jobname, params (double start, double end, string property, Operator op, double value)[] expected)
+        public VECTOTestCase(string jobname, params SegmentCondition[] segmentConditions)
         {
             m_Data = new ModFileData();
             m_Conditions = new List<SegmentCondition>();
             Assert.True(m_Data.ParseCsv(jobname));
 
-            foreach (var exp in expected) {
+            foreach (var sc in segmentConditions) {
                 try {
-                    
-                    var testData = m_Data.GetTestData(exp.start, exp.end, exp.property);
-                    var testSegment = new TestSegment(exp.start, exp.end, testData);
-                    var segmentCondition = Utils.SegmentConditionFactoryMethod(exp.op, testSegment, exp.property, exp.value);
-                    m_Conditions.Add(segmentCondition);
-
+                    sc.Data = m_Data.GetTestData(sc.Start, sc.End, sc.Property, sc.Type);
+                    m_Conditions.Add(sc);
                 } catch (Exception e) {
                     Console.Error.WriteLine(e.ToString());
                 }

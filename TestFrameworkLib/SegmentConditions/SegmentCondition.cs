@@ -5,9 +5,13 @@ namespace TestFramework
 {
     public class SegmentCondition
     {
-        protected TestSegment Segment { get; set; }
+        // protected TestSegment Segment { get; set; }
+        public double Start { get; set; }
+        public double End { get; set; }
+        public List<DataRow> Data { get; set; }
+        public SegmentType Type { get; set; }
         protected IOperator Operator { get; set; }
-        protected string Property { get; set; }
+        public string Property { get; set; }
         protected double Value { get; set; }
         public bool ToAnalyze { get; }
         protected List<SegmentCondition> TrueConditions;
@@ -15,9 +19,17 @@ namespace TestFramework
 
         public bool Passed { get; set; }
 
-        protected SegmentCondition(TestSegment testSegment, string property, double value, bool analyze=false)
+        protected SegmentCondition(double start, double end, string property, double value, bool analyze=false, SegmentType segmentType = SegmentType.Distance)
         {
-            Segment = testSegment;
+            // Segment = testSegment;
+            Start = start;
+            End = end;
+            
+            if (start > end) {
+                throw new ArgumentException($"start delimiter ({start}) greater than end delimiter ({end})");
+            }
+            Data = new List<DataRow>();
+            Type = segmentType;
             Property = property;
             Value = value;
             ToAnalyze = analyze;
@@ -28,9 +40,9 @@ namespace TestFramework
 
         public virtual void Check()
         {
-            foreach (var dataLine in Segment.Data) {
+            foreach (var dataLine in Data) {
                 try {
-                    FailPoint = dataLine[Segment.TypeColumnName()];
+                    FailPoint = dataLine[TypeColumnName()];
                     Operator.Apply(dataLine[Property], Value, GenerateFailMessage(dataLine[Property]));
                 } catch (Exception) {
                     Passed = false;
@@ -49,9 +61,9 @@ namespace TestFramework
             bool areAllEqual = true;
             double maxValue = double.MinValue;
             double minValue = double.MaxValue;
-            double oldValue = Segment.Data[0][Property];
+            double oldValue = Data[0][Property];
 
-            foreach (var dataLine in Segment.Data)
+            foreach (var dataLine in Data)
             {
                 double actualValue = dataLine[Property];
                 if(oldValue != actualValue && areAllEqual)
@@ -72,12 +84,12 @@ namespace TestFramework
 
             if(areAllEqual)
             {
-                TrueConditions.Add(new EqualsToSegmentCondition(Segment, Property, oldValue));
+                TrueConditions.Add(new EqualsToSegmentCondition(Start, End, Property, oldValue, analyze:false, Type));
             }
             else
             {
-                TrueConditions.Add(new GreaterThanSegmentCondition(Segment, Property, minValue));
-                TrueConditions.Add(new LowerThanSegmentCondition(Segment, Property, maxValue));            
+                TrueConditions.Add(new GreaterThanSegmentCondition(Start, End, Property, minValue, analyze:false, Type));
+                TrueConditions.Add(new LowerThanSegmentCondition(Start, End, Property, maxValue, analyze:false, Type));            
             }
         }
 
@@ -110,10 +122,20 @@ namespace TestFramework
             }
         }
 
-        public override string ToString() => $"({Segment}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{Operator}, {Value})";
+        public override string ToString() => $"({Start}, {End}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{Operator}, {Value})";
+
+        public string TypeColumnName()
+        {
+            return Type == SegmentType.Distance ? ModFileHeader.dist : ModFileHeader.dt;
+        }
+
+        public string TypeMeasuringUnit()
+        {
+            return Type == SegmentType.Distance ? "m" : "s";
+        }
 
         public virtual string GenerateFailMessage(double lhs) =>
-            $"Fail ({FailPoint}{Segment.TypeMeasuringUnit()}): Expected '{Property}' {Operator.Symbol()} {Value}, Got: {lhs}";
+            $"Fail ({FailPoint}{TypeMeasuringUnit()}): Expected '{Property}' {Operator.Symbol()} {Value}, Got: {lhs}";
 
         public virtual string GeneratePassMessage(double lhs) =>
             $"Pass: Expected '{Property}' {Operator.Symbol()} {Value}. Got: {lhs}";
