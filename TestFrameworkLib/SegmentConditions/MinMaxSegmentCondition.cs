@@ -15,13 +15,14 @@ namespace TestFramework
 
         public override string ToString()
         {
+            var operator_string = ToAnalyze ? "Analyze_" + Operator.ToString() : Operator.ToString();
             var values = "(" + string.Join(", ", Expected) + ")";
             if(Start_Tolerance == 0 && End_Tolerance == 0)
             {
-                return $"({Start}, {End}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{Operator}, {values})";   
+                return $"({Start}, {End}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{operator_string}, {values})";   
             }
 
-            return $"({Start}, {Start_Tolerance}, {End}, {End_Tolerance}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{Operator}, {values})";
+            return $"({Start}, {Start_Tolerance}, {End}, {End_Tolerance}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{operator_string}, {values})";
         }
     };
 }

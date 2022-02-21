@@ -77,6 +77,28 @@ namespace TestFramework
             return SegmentConditionFactoryMethod(start, start_tolerance, end, end_tolerance, property, op, value_set);
         }
 
+        public static SegmentCondition TC(
+            double start, 
+            double end, 
+            string property, 
+            Operator op, 
+            int [] value_set)
+        {
+            return SegmentConditionFactoryMethod(start, 0, end, 0, property, op, Array.ConvertAll<int, double>(value_set, x => x));
+        }
+
+        public static SegmentCondition TC(
+            double start,
+            double start_tolerance,
+            double end, 
+            double end_tolerance,
+            string property, 
+            Operator op, 
+            int [] value_set)
+        {
+            return SegmentConditionFactoryMethod(start, start_tolerance, end, end_tolerance, property, op, Array.ConvertAll<int, double>(value_set, x => x));
+        }
+
         private static SegmentCondition SegmentConditionFactoryMethod(
             double start_val,
             double start_tolerance, 
@@ -107,7 +129,7 @@ namespace TestFramework
                     sc = new EqualsToSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new []{first_expected_value}, analyze:true);
                     break;
                 default:
-                    sc = new EqualsToSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new []{first_expected_value}); // TODO Place holder for now
+                    sc = new NoOpSegmentCondition();
                     break;
             }
 
@@ -125,12 +147,12 @@ namespace TestFramework
             SegmentCondition sc;
             switch(op)
             {
-                // case Operator.ValueSet:
-                //     sc = new ValueSetSegmentCondition(start_val, end_val, property, first_expected_value);
-                //     break;
-                // case Operator.Analyze_ValueSet:
-                //     sc = new ValueSetSegmentCondition(start_val, end_val, property, first_expected_value, analyze: true);
-                //     break;
+                case Operator.ValueSet:
+                    sc = new ValueSetSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, value_set); /* TODO handle segment type on all cases */
+                    break;
+                case Operator.Analyze_ValueSet:
+                    sc = new ValueSetSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, value_set, analyze: true);
+                    break;
                 case Operator.MinMax:
                     sc = new MinMaxSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, value_set);
                     break;
@@ -138,7 +160,7 @@ namespace TestFramework
                     sc = new MinMaxSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, value_set, analyze: true);
                     break;
                 default:
-                    sc = new EqualsToSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, value_set); // TODO Place holder for now
+                    sc = new NoOpSegmentCondition();
                     break;
             }
 

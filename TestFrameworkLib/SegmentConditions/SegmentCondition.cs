@@ -54,8 +54,6 @@ namespace TestFramework
             }
         }
 
-        public virtual void Print() => Console.Write(ToString());
-
         public virtual void Analyze()
         {
             TrueConditions.Clear();
@@ -102,42 +100,55 @@ namespace TestFramework
             }
         }
 
-        public virtual void PrintTrueConditions()
+        public virtual void Print(string prefix="", string suffix="")
         {
-            // if(!ToAnalyze)
-            // {
-            //     Console.Write("Condition `{0}` failed. Correct conditions:\n", ToString());
-            // }else
-            // {
-            //     Console.Write("Analysis results for condition: `{0}`:\n", ToString());
-            // }
-            
-            foreach(var segmentCondition in TrueConditions)
+            Console.WriteLine(prefix + ToString() + suffix);
+        }
+
+        public virtual void PrintCorrectConditions(string prefix="", string suffix="")
+        {
+            if(Passed && !ToAnalyze)
             {
-                Console.WriteLine("Utils.TC{0},", segmentCondition.ToString());
+                Print(prefix, suffix);
+            }
+            else
+            {
+                foreach(var segmentCondition in TrueConditions)
+                {
+                    Console.WriteLine(prefix + segmentCondition.ToString() + suffix);
+                }
             }
         } 
 
-        public virtual void PrintResults()
+        public virtual void PrintResults(string prefix="\t*", string suffix="")
         {
+            
             if(!ToAnalyze)
             {
                 Console.WriteLine("{0} -> {1}", ToString(), Passed ? "✔ Pass" : "✗ Fail");
+                if(!Passed)
+                {
+                    PrintCorrectConditions(prefix, suffix);
+                }
             }
-            if(!Passed || ToAnalyze)
+            else
             {
-                PrintTrueConditions();
+                Print(suffix: " analysis: ");
+                PrintCorrectConditions(prefix);
             }
+            Console.WriteLine();
+            
         }
 
         public override string ToString()
         {
+            var operator_string = ToAnalyze ? "Analyze_" + Operator.ToString() : Operator.ToString();
             if(Start_Tolerance == 0 && End_Tolerance == 0)
             {
-                return $"({Start}, {End}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{Operator}, {Expected[0]})";   
+                return $"({Start}, {End}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{operator_string}, {Expected[0]})";   
             }
 
-            return $"({Start}, {Start_Tolerance}, {End}, {End_Tolerance}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{Operator}, {Expected[0]})";
+            return $"({Start}, {Start_Tolerance}, {End}, {End_Tolerance}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{operator_string}, {Expected[0]})";
         }
 
         public string TypeColumnName()

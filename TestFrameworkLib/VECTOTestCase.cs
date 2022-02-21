@@ -56,21 +56,19 @@ namespace TestFramework
         {
             if(!m_Passed)
             {
-                Console.WriteLine("✗ Some test cases failed. Correct test cases: ");
-                foreach (var segmentCondition in m_Conditions) {
-                    if(segmentCondition.Passed)
-                    {
-                        segmentCondition.ToString();
-                    }
-                    else
-                    {
-                        segmentCondition.PrintTrueConditions();
-                    }
-                }
+                Console.WriteLine("✗ Some test cases failed. Corrected test cases: ");
             }
             else
             {
                 Console.WriteLine("✔ All test cases passed!");
+            }
+
+            var prefix = "Utils.TC";
+            var suffix = ",";
+
+            foreach (var segmentCondition in m_Conditions) 
+            {
+                segmentCondition.PrintCorrectConditions(prefix, suffix);
             }
         }
     }
