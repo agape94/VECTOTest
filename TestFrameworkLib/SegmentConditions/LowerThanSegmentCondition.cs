@@ -2,8 +2,8 @@ namespace TestFramework
 {
     public class LowerThanSegmentCondition : SegmentCondition
     {
-        public LowerThanSegmentCondition(double start, double end, string property, double value, bool analyze=false, SegmentType segmentType = SegmentType.Distance) 
-        : base(start, end, property, value, analyze, segmentType)  
+        public LowerThanSegmentCondition(double start, double start_tolerance, double end, double end_tolerance, string property, double value, bool analyze=false, SegmentType segmentType = SegmentType.Distance) 
+        : base(start, start_tolerance, end, end_tolerance, property, value, analyze, segmentType)  
         {
             Operator = new LowerOperator();
         }

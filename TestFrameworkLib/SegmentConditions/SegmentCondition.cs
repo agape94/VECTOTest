@@ -7,7 +7,9 @@ namespace TestFramework
     {
         // protected TestSegment Segment { get; set; }
         public double Start { get; set; }
+        public double Start_Tolerance { get; set; }
         public double End { get; set; }
+        public double End_Tolerance { get; set; }
         public List<DataRow> Data { get; set; }
         public SegmentType Type { get; set; }
         protected IOperator Operator { get; set; }
@@ -19,11 +21,12 @@ namespace TestFramework
 
         public bool Passed { get; set; }
 
-        protected SegmentCondition(double start, double end, string property, double value, bool analyze=false, SegmentType segmentType = SegmentType.Distance)
+        protected SegmentCondition(double start, double start_tolerance, double end, double end_tolerance, string property, double value, bool analyze=false, SegmentType segmentType = SegmentType.Distance)
         {
-            // Segment = testSegment;
             Start = start;
+            Start_Tolerance = start_tolerance;
             End = end;
+            End_Tolerance = end_tolerance;
             
             if (start > end) {
                 throw new ArgumentException($"start delimiter ({start}) greater than end delimiter ({end})");
@@ -84,12 +87,12 @@ namespace TestFramework
 
             if(areAllEqual)
             {
-                TrueConditions.Add(new EqualsToSegmentCondition(Start, End, Property, oldValue, analyze:false, Type));
+                TrueConditions.Add(new EqualsToSegmentCondition(Start, Start_Tolerance, End, End_Tolerance, Property, oldValue, analyze:false, Type));
             }
             else
             {
-                TrueConditions.Add(new GreaterThanSegmentCondition(Start, End, Property, minValue, analyze:false, Type));
-                TrueConditions.Add(new LowerThanSegmentCondition(Start, End, Property, maxValue, analyze:false, Type));            
+                TrueConditions.Add(new GreaterThanSegmentCondition(Start, Start_Tolerance, End, End_Tolerance, Property, minValue, analyze:false, Type));
+                TrueConditions.Add(new LowerThanSegmentCondition(Start, Start_Tolerance, End, End_Tolerance, Property, maxValue, analyze:false, Type));            
             }
         }
 
@@ -122,7 +125,15 @@ namespace TestFramework
             }
         }
 
-        public override string ToString() => $"({Start}, {End}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{Operator}, {Value})";
+        public override string ToString()
+        {
+            if(Start_Tolerance == 0 && End_Tolerance == 0)
+            {
+                return $"({Start}, {End}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{Operator}, {Value})";   
+            }
+
+            return $"({Start}, {Start_Tolerance}, {End}, {End_Tolerance}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{Operator}, {Value})";
+        }
 
         public string TypeColumnName()
         {
