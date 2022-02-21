@@ -5,7 +5,6 @@ namespace TestFramework
 {
     public class SegmentCondition
     {
-        // protected TestSegment Segment { get; set; }
         public double Start { get; set; }
         public double Start_Tolerance { get; set; }
         public double End { get; set; }
@@ -14,14 +13,14 @@ namespace TestFramework
         public SegmentType Type { get; set; }
         protected IOperator Operator { get; set; }
         public string Property { get; set; }
-        protected double Value { get; set; }
+        protected double[] Expected { get; set; }
         public bool ToAnalyze { get; }
         protected List<SegmentCondition> TrueConditions;
         protected double FailPoint { get; set; }
 
         public bool Passed { get; set; }
 
-        protected SegmentCondition(double start, double start_tolerance, double end, double end_tolerance, string property, double value, bool analyze=false, SegmentType segmentType = SegmentType.Distance)
+        protected SegmentCondition(double start, double start_tolerance, double end, double end_tolerance, string property, double[] expected, bool analyze=false, SegmentType segmentType = SegmentType.Distance)
         {
             Start = start;
             Start_Tolerance = start_tolerance;
@@ -34,7 +33,7 @@ namespace TestFramework
             Data = new List<DataRow>();
             Type = segmentType;
             Property = property;
-            Value = value;
+            Expected = expected;
             ToAnalyze = analyze;
             Passed = true;
             TrueConditions = new List<SegmentCondition>();
@@ -46,7 +45,7 @@ namespace TestFramework
             foreach (var dataLine in Data) {
                 try {
                     FailPoint = dataLine[TypeColumnName()];
-                    Operator.Apply(dataLine[Property], Value, GenerateFailMessage(dataLine[Property]));
+                    Operator.Apply(dataLine[Property], Expected, GenerateFailMessage(dataLine[Property]));
                 } catch (Exception) {
                     Passed = false;
                     Analyze();
@@ -87,28 +86,35 @@ namespace TestFramework
 
             if(areAllEqual)
             {
-                TrueConditions.Add(new EqualsToSegmentCondition(Start, Start_Tolerance, End, End_Tolerance, Property, oldValue, analyze:false, Type));
+                TrueConditions.Add(new EqualsToSegmentCondition(Start, Start_Tolerance, End, End_Tolerance, Property, new[] {oldValue}, analyze:false, Type));
             }
             else
             {
-                TrueConditions.Add(new GreaterThanSegmentCondition(Start, Start_Tolerance, End, End_Tolerance, Property, minValue, analyze:false, Type));
-                TrueConditions.Add(new LowerThanSegmentCondition(Start, Start_Tolerance, End, End_Tolerance, Property, maxValue, analyze:false, Type));            
+                if(Operator is MinMaxOperator)
+                {
+                    TrueConditions.Add(new MinMaxSegmentCondition(Start, Start_Tolerance, End, End_Tolerance, Property, new[] {minValue, maxValue}, analyze:false, Type));
+                }  
+                else
+                {
+                    TrueConditions.Add(new GreaterThanSegmentCondition(Start, Start_Tolerance, End, End_Tolerance, Property, new[] {minValue}, analyze:false, Type));
+                    TrueConditions.Add(new LowerThanSegmentCondition(Start, Start_Tolerance, End, End_Tolerance, Property, new[] {maxValue}, analyze:false, Type));
+                }          
             }
         }
 
         public virtual void PrintTrueConditions()
         {
-            if(!ToAnalyze)
-            {
-                Console.Write("Condition `{0}` failed. Correct conditions:\n", ToString());
-            }else
-            {
-                Console.Write("Analysis results for condition: `{0}`:\n", ToString());
-            }
+            // if(!ToAnalyze)
+            // {
+            //     Console.Write("Condition `{0}` failed. Correct conditions:\n", ToString());
+            // }else
+            // {
+            //     Console.Write("Analysis results for condition: `{0}`:\n", ToString());
+            // }
             
             foreach(var segmentCondition in TrueConditions)
             {
-                Console.WriteLine("\t{0},", segmentCondition.ToString());
+                Console.WriteLine("Utils.TC{0},", segmentCondition.ToString());
             }
         } 
 
@@ -117,7 +123,6 @@ namespace TestFramework
             if(!ToAnalyze)
             {
                 Console.WriteLine("{0} -> {1}", ToString(), Passed ? "✔ Pass" : "✗ Fail");
-                
             }
             if(!Passed || ToAnalyze)
             {
@@ -129,10 +134,10 @@ namespace TestFramework
         {
             if(Start_Tolerance == 0 && End_Tolerance == 0)
             {
-                return $"({Start}, {End}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{Operator}, {Value})";   
+                return $"({Start}, {End}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{Operator}, {Expected[0]})";   
             }
 
-            return $"({Start}, {Start_Tolerance}, {End}, {End_Tolerance}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{Operator}, {Value})";
+            return $"({Start}, {Start_Tolerance}, {End}, {End_Tolerance}, {ModFileData.GetModFileHeaderVariableNameByValue(Property)}, Operator.{Operator}, {Expected[0]})";
         }
 
         public string TypeColumnName()
@@ -146,9 +151,9 @@ namespace TestFramework
         }
 
         public virtual string GenerateFailMessage(double lhs) =>
-            $"Fail ({FailPoint}{TypeMeasuringUnit()}): Expected '{Property}' {Operator.Symbol()} {Value}, Got: {lhs}";
+            $"Fail ({FailPoint}{TypeMeasuringUnit()}): Expected '{Property}' {Operator.Symbol()} {Expected}, Got: {lhs}";
 
         public virtual string GeneratePassMessage(double lhs) =>
-            $"Pass: Expected '{Property}' {Operator.Symbol()} {Value}. Got: {lhs}";
+            $"Pass: Expected '{Property}' {Operator.Symbol()} {Expected}. Got: {lhs}";
     }
 }

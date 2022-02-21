@@ -8,11 +8,14 @@ namespace TestFramework
     {
         private List<SegmentCondition> m_Conditions;
         private ModFileData m_Data;
+        private bool m_Passed;
 
         public VECTOTestCase(string jobname, params SegmentCondition[] segmentConditions)
         {
             m_Data = new ModFileData();
             m_Conditions = new List<SegmentCondition>();
+            m_Passed = true;
+
             Assert.True(m_Data.ParseCsv(jobname));
 
             foreach (var sc in segmentConditions) {
@@ -39,15 +42,36 @@ namespace TestFramework
                 {
                     segmentCondition.Analyze();
                 }
+
+                segmentCondition.PrintResults();
+
+                if(!segmentCondition.Passed && m_Passed)
+                {
+                    m_Passed = false;
+                }
             }
         }
 
         private void PrintResults()
         {
-            foreach (var segmentCondition in m_Conditions) {
-                segmentCondition.PrintResults();
+            if(!m_Passed)
+            {
+                Console.WriteLine("✗ Some test cases failed. Correct test cases: ");
+                foreach (var segmentCondition in m_Conditions) {
+                    if(segmentCondition.Passed)
+                    {
+                        segmentCondition.ToString();
+                    }
+                    else
+                    {
+                        segmentCondition.PrintTrueConditions();
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("✔ All test cases passed!");
             }
         }
-
     }
 }

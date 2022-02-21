@@ -6,9 +6,10 @@ namespace TestFramework
     {
         public EqualsOperator() {}
 
-        public void Apply(double lhs, double rhs, string errorMessage = "")
+        public void Apply(double lhs, double[] rhs, string errorMessage = "")
         {
-            Assert.That(lhs, Is.EqualTo(rhs), errorMessage);
+            Assert.That(rhs.Length, Is.EqualTo(1));
+            Assert.That(lhs, Is.EqualTo(rhs[0]), errorMessage);
         }
 
         public string Symbol()

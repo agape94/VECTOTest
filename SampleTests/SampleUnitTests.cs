@@ -19,9 +19,11 @@ namespace SampleUnitTests
 
         [Test]
         public void CityBus_AT_PS_RegionalDelivery_Cycle6() => new VECTOTestCase(@"mod_files/CityBus_AT_PS_RegionalDelivery.vmod",
-            Utils.TC(0, 100, ModFileHeader.v_act, Operator.Lower, 100),
-            Utils.TC(0, 10, 1000, 0, ModFileHeader.Gear, Operator.Greater, 3),
-            Utils.TC(100, 50, 2000, 0, ModFileHeader.acc, Operator.Equals, 430)
+            // Utils.TC(0, 100, ModFileHeader.v_act, Operator.Lower, 100),
+            // Utils.TC(0, 10, 1000, 0, ModFileHeader.Gear, Operator.Greater, 3),
+            Utils.TC(100, 50, 2000, 0, ModFileHeader.v_act, Operator.Equals, 150),
+            Utils.TC(100, 50, 2000, 0, ModFileHeader.Gear, Operator.MinMax, (100, 250)),
+            Utils.TC(100, 50, 2000, 0, ModFileHeader.v_act, Operator.MinMax, (100, 250))
 
             // (0, 1e6, ModFileHeader.v_act, Operator.Analyze_Greater, 100)
             // (50, 80, (ModFileHeader.v_act, ModFileHeader.Gear ...), Operator.Analyze) -> 
