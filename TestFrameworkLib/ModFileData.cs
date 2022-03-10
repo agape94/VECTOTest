@@ -45,6 +45,17 @@ namespace TestFramework
 			return testData;
 		}
 
+		public bool IsValidHeader(string header_to_check)
+        {
+            var headers = ModFileData.GetModFileHeaders();
+            foreach (var header in headers) {
+                if (header_to_check == header) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
 		public bool ParseCsv(string path)
 		{
 			// read all lines from the file
@@ -61,7 +72,7 @@ namespace TestFramework
 
 			foreach (var header in headers) {
 				// check if the headers found in the mod file match the ones defined in Types.ModFileHeader class
-				if (Utils.IsValidHeader(header) == false) {
+				if (IsValidHeader(header) == false) {
 					Console.Error.WriteLine("Column '{0}' is not defined in Types.ModFileHeaders class.", header);
 					return false;
 				}
