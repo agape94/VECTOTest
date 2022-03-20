@@ -7,7 +7,7 @@ namespace TestFramework
     public class VECTOTestCase
     {
         private List<SegmentCondition> m_Conditions;
-        private ModFileData m_Data;
+        private static ModFileData m_Data;
         private bool m_Passed;
 
         public VECTOTestCase() {}
@@ -22,7 +22,13 @@ namespace TestFramework
 
             foreach (var sc in segmentConditions) {
                 try {
-                    sc.Data = m_Data.GetTestData(sc.Start, sc.End, sc.Property, sc.Type);
+                    if(sc.Time_Tolerance != 0)
+                    {
+                        Console.Write(m_Data.ToString());
+                        sc.Start_Tolerance = ComputeTolerance(sc.Start, sc.Time_Tolerance, sc.Type);
+                        sc.End_Tolerance = ComputeTolerance(sc.End, sc.Time_Tolerance, sc.Type);
+                    }
+                    sc.Data = m_Data.GetTestData(sc.Start + sc.Start_Tolerance, sc.End - sc.End_Tolerance, sc.Property, sc.Type);
                     m_Conditions.Add(sc);
                 } catch (Exception e) {
                     Console.Error.WriteLine(e.ToString());
@@ -54,6 +60,17 @@ namespace TestFramework
             }
         }
 
+        public static double ComputeTolerance(double position, double toleranceSeconds, SegmentType st = SegmentType.Distance)
+        {
+            double tolerance_m = double.MinValue;
+            double kphToMpsFactor = 0.277777778;
+
+            DataRow dataRow = m_Data.getRowAt(position, st);
+            double speedMps = dataRow[ModFileHeader.v_act] * kphToMpsFactor;
+            tolerance_m = speedMps * toleranceSeconds;
+            return tolerance_m;
+        }
+
         private void PrintResults()
         {
             if(!m_Passed)
@@ -74,14 +91,30 @@ namespace TestFramework
             }
         }
 
+        // ===============================================================================================
+        // single expected value
+
         public static SegmentCondition TC(
             double start, 
             double end, 
             string property, 
             Operator op, 
-            double expected_value)
+            double expected_value,
+            SegmentType sg = SegmentType.Distance)
         {
-            return SegmentConditionFactoryMethod(start, 0, end, 0, property, op, expected_value);
+            return SegmentConditionFactoryMethod(start, 0, end, 0, property, op, expected_value, sg);
+        }
+
+        public static SegmentCondition TC(
+            double start,
+            double end, 
+            double time_tolerance_seconds,
+            string property, 
+            Operator op, 
+            double expected_value,
+            SegmentType sg = SegmentType.Distance)
+        {
+            return SegmentConditionFactoryMethod(start, end, time_tolerance_seconds, property, op, expected_value, sg);
         }
 
         public static SegmentCondition TC(
@@ -91,21 +124,35 @@ namespace TestFramework
             double end_tolerance,
             string property, 
             Operator op, 
-            double expected_value)
+            double expected_value,
+            SegmentType sg = SegmentType.Distance)
         {
-            return SegmentConditionFactoryMethod(start, start_tolerance, end, end_tolerance, property, op, expected_value);
+            return SegmentConditionFactoryMethod(start, start_tolerance, end, end_tolerance, property, op, expected_value, sg);
         }
 
         // ===============================================================================================
-
+        // min/max expected value 
         public static SegmentCondition TC(
             double start, 
             double end, 
             string property, 
             Operator op, 
-            (double min, double max) expected_values)
+            (double min, double max) expected_values,
+            SegmentType sg = SegmentType.Distance)
         {
-            return SegmentConditionFactoryMethod(start, 0, end, 0, property, op, new[] {expected_values.min, expected_values.max});
+            return SegmentConditionFactoryMethod(start, 0, end, 0, property, op, new[] {expected_values.min, expected_values.max}, sg);
+        }
+
+        public static SegmentCondition TC(
+            double start,
+            double end,
+            double time_tolerance_seconds,
+            string property, 
+            Operator op, 
+            (double min, double max) expected_values,
+            SegmentType sg = SegmentType.Distance)
+        {
+            return SegmentConditionFactoryMethod(start, end, time_tolerance_seconds, property, op, new[] {expected_values.min, expected_values.max}, sg);
         }
 
         public static SegmentCondition TC(
@@ -115,21 +162,35 @@ namespace TestFramework
             double end_tolerance,
             string property, 
             Operator op, 
-            (double min, double max) expected_values)
+            (double min, double max) expected_values,
+            SegmentType sg = SegmentType.Distance)
         {
-            return SegmentConditionFactoryMethod(start, start_tolerance, end, end_tolerance, property, op, new[] {expected_values.min, expected_values.max});
+            return SegmentConditionFactoryMethod(start, start_tolerance, end, end_tolerance, property, op, new[] {expected_values.min, expected_values.max}, sg);
         }
 
         // ===============================================================================================
-
+        // double value set expected value
         public static SegmentCondition TC(
             double start, 
             double end, 
             string property, 
             Operator op, 
-            double [] value_set)
+            double [] value_set,
+            SegmentType sg = SegmentType.Distance)
         {
-            return SegmentConditionFactoryMethod(start, 0, end, 0, property, op, value_set);
+            return SegmentConditionFactoryMethod(start, 0, end, 0, property, op, value_set, sg);
+        }
+
+        public static SegmentCondition TC(
+            double start,
+            double end,
+            double time_tolerance_seconds,
+            string property, 
+            Operator op, 
+            double [] value_set,
+            SegmentType sg = SegmentType.Distance)
+        {
+            return SegmentConditionFactoryMethod(start, end, time_tolerance_seconds, property, op, value_set, sg);
         }
 
         public static SegmentCondition TC(
@@ -139,19 +200,36 @@ namespace TestFramework
             double end_tolerance,
             string property, 
             Operator op, 
-            double [] value_set)
+            double [] value_set,
+            SegmentType sg = SegmentType.Distance)
         {
-            return SegmentConditionFactoryMethod(start, start_tolerance, end, end_tolerance, property, op, value_set);
+            return SegmentConditionFactoryMethod(start, start_tolerance, end, end_tolerance, property, op, value_set, sg);
         }
+
+        // ===============================================================================================
+        // int value set expected value
 
         public static SegmentCondition TC(
             double start, 
             double end, 
             string property, 
             Operator op, 
-            int [] value_set)
+            int [] value_set,
+            SegmentType sg = SegmentType.Distance)
         {
-            return SegmentConditionFactoryMethod(start, 0, end, 0, property, op, Array.ConvertAll<int, double>(value_set, x => x));
+            return SegmentConditionFactoryMethod(start, 0, end, 0, property, op, Array.ConvertAll<int, double>(value_set, x => x), sg);
+        }
+
+        public static SegmentCondition TC(
+            double start,
+            double end,
+            double time_tolerance_seconds,
+            string property, 
+            Operator op, 
+            int [] value_set,
+            SegmentType sg = SegmentType.Distance)
+        {
+            return SegmentConditionFactoryMethod(start, end, time_tolerance_seconds, property, op, Array.ConvertAll<int, double>(value_set, x => x), sg);
         }
 
         public static SegmentCondition TC(
@@ -161,10 +239,14 @@ namespace TestFramework
             double end_tolerance,
             string property, 
             Operator op, 
-            int [] value_set)
+            int [] value_set,
+            SegmentType sg = SegmentType.Distance)
         {
-            return SegmentConditionFactoryMethod(start, start_tolerance, end, end_tolerance, property, op, Array.ConvertAll<int, double>(value_set, x => x));
+            return SegmentConditionFactoryMethod(start, start_tolerance, end, end_tolerance, property, op, Array.ConvertAll<int, double>(value_set, x => x), sg);
         }
+
+        // ===============================================================================================
+        // factory methods
 
         private static SegmentCondition SegmentConditionFactoryMethod(
             double start_val,
@@ -173,27 +255,28 @@ namespace TestFramework
             double end_tolerance, 
             string property, 
             Operator op, 
-            double first_expected_value)
+            double first_expected_value,
+            SegmentType sg)
         {
             SegmentCondition sc;
             switch (op) {
                 case Operator.Lower:
-                    sc = new LowerThanSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new []{first_expected_value});
+                    sc = new LowerThanSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new []{first_expected_value}, analyze: false, segmentType:sg);
                     break;
                 case Operator.Greater:
-                    sc = new GreaterThanSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new []{first_expected_value});
+                    sc = new GreaterThanSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new []{first_expected_value}, analyze: false, segmentType:sg);
                     break;
                 case Operator.Equals:
-                    sc = new EqualsToSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new []{first_expected_value});
+                    sc = new EqualsToSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new []{first_expected_value}, analyze: false, segmentType:sg);
                     break;
                 case Operator.Analyze_Lower:
-                    sc = new LowerThanSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new []{first_expected_value}, analyze:true);
+                    sc = new LowerThanSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new []{first_expected_value}, analyze:true, segmentType:sg);
                     break;
                 case Operator.Analyze_Greater:
-                    sc = new GreaterThanSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new []{first_expected_value}, analyze:true);
+                    sc = new GreaterThanSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new []{first_expected_value}, analyze:true, segmentType:sg);
                     break;
                 case Operator.Analyze_Equals:
-                    sc = new EqualsToSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new []{first_expected_value}, analyze:true);
+                    sc = new EqualsToSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new []{first_expected_value}, analyze:true, segmentType:sg);
                     break;
                 default:
                     sc = new NoOpSegmentCondition();
@@ -209,22 +292,92 @@ namespace TestFramework
             double end_tolerance, 
             string property, 
             Operator op, 
-            double [] value_set)
+            double [] value_set,
+            SegmentType sg)
         {
             SegmentCondition sc;
             switch(op)
             {
                 case Operator.ValueSet:
-                    sc = new ValueSetSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, value_set); /* TODO handle segment type on all cases */
+                    sc = new ValueSetSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, value_set, analyze: false, segmentType:sg); /* TODO handle segment type on all cases */
                     break;
                 case Operator.Analyze_ValueSet:
-                    sc = new ValueSetSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, value_set, analyze: true);
+                    sc = new ValueSetSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, value_set, analyze: true, segmentType:sg);
                     break;
                 case Operator.MinMax:
-                    sc = new MinMaxSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, value_set);
+                    sc = new MinMaxSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, value_set, analyze: false, segmentType:sg);
                     break;
                 case Operator.Analyze_MinMax:
-                    sc = new MinMaxSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, value_set, analyze: true);
+                    sc = new MinMaxSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, value_set, analyze: true, segmentType:sg);
+                    break;
+                default:
+                    sc = new NoOpSegmentCondition();
+                    break;
+            }
+
+            return sc;
+        }
+
+
+        private static SegmentCondition SegmentConditionFactoryMethod(
+            double start_val,
+            double end_val,
+            double time_tolerance_seconds, 
+            string property, 
+            Operator op, 
+            double first_expected_value,
+            SegmentType sg)
+        {
+            SegmentCondition sc;
+            switch (op) {
+                case Operator.Lower:
+                    sc = new LowerThanSegmentCondition(start_val, end_val, time_tolerance_seconds, property, new []{first_expected_value}, analyze: false, segmentType:sg);
+                    break;
+                case Operator.Greater:
+                    sc = new GreaterThanSegmentCondition(start_val, end_val, time_tolerance_seconds, property, new []{first_expected_value}, analyze: false, segmentType:sg);
+                    break;
+                case Operator.Equals:
+                    sc = new EqualsToSegmentCondition(start_val, end_val, time_tolerance_seconds, property, new []{first_expected_value}, analyze: false, segmentType:sg);
+                    break;
+                case Operator.Analyze_Lower:
+                    sc = new LowerThanSegmentCondition(start_val, end_val, time_tolerance_seconds, property, new []{first_expected_value}, analyze:true, segmentType:sg);
+                    break;
+                case Operator.Analyze_Greater:
+                    sc = new GreaterThanSegmentCondition(start_val, end_val, time_tolerance_seconds, property, new []{first_expected_value}, analyze:true, segmentType:sg);
+                    break;
+                case Operator.Analyze_Equals:
+                    sc = new EqualsToSegmentCondition(start_val, end_val, time_tolerance_seconds, property, new []{first_expected_value}, analyze:true, segmentType:sg);
+                    break;
+                default:
+                    sc = new NoOpSegmentCondition();
+                    break;
+            }
+
+            return sc;
+        }
+        private static SegmentCondition SegmentConditionFactoryMethod(
+            double start_val,
+            double end_val,
+            double time_tolerance_seconds, 
+            string property, 
+            Operator op, 
+            double [] value_set,
+            SegmentType sg)
+        {
+            SegmentCondition sc;
+            switch(op)
+            {
+                case Operator.ValueSet:
+                    sc = new ValueSetSegmentCondition(start_val, end_val, time_tolerance_seconds, property, value_set, analyze: false, segmentType:sg); /* TODO handle segment type on all cases */
+                    break;
+                case Operator.Analyze_ValueSet:
+                    sc = new ValueSetSegmentCondition(start_val, end_val, time_tolerance_seconds, property, value_set, analyze: true, segmentType:sg);
+                    break;
+                case Operator.MinMax:
+                    sc = new MinMaxSegmentCondition(start_val, end_val, time_tolerance_seconds, property, value_set, analyze: false, segmentType:sg);
+                    break;
+                case Operator.Analyze_MinMax:
+                    sc = new MinMaxSegmentCondition(start_val, end_val, time_tolerance_seconds, property, value_set, analyze: true, segmentType:sg);
                     break;
                 default:
                     sc = new NoOpSegmentCondition();

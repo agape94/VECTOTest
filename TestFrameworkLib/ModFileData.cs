@@ -17,6 +17,19 @@ namespace TestFramework
 			m_Data = new List<DataRow>();
 		}
 
+		public DataRow getRowAt(double position, SegmentType positionType=SegmentType.Distance)
+		{
+			var columnName = positionType == SegmentType.Distance ? ModFileHeader.dist : ModFileHeader.time;
+			foreach (var dataRow in m_Data)
+			{
+				if(dataRow[columnName] >= position)
+				{
+					return dataRow;
+				}
+			}
+			return null;
+		}
+
 		public List<DataRow> GetTestData(double start, double end, string column, SegmentType st = SegmentType.Distance)
 		{
 			if (start > end) {
@@ -77,8 +90,6 @@ namespace TestFramework
 					return false;
 				}
 			}
-
-			// m_ColumnNames = headers;
 
 			index++;
 

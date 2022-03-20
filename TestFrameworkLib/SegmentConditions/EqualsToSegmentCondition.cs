@@ -7,5 +7,11 @@ namespace TestFramework
         {
             Operator = new EqualsOperator();
         }
+
+        public EqualsToSegmentCondition(double start, double end, double time_tolerance, string property, double[] expected, bool analyze=false, SegmentType segmentType = SegmentType.Distance) 
+        : base(start, end, time_tolerance, property, expected, analyze, segmentType)  
+        {
+            Operator = new EqualsOperator();
+        }
     };
 }

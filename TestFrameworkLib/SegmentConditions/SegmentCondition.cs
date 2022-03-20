@@ -9,23 +9,25 @@ namespace TestFramework
         public double Start_Tolerance { get; set; }
         public double End { get; set; }
         public double End_Tolerance { get; set; }
+        public double Time_Tolerance { get; set; }
         public List<DataRow> Data { get; set; }
         public SegmentType Type { get; set; }
         protected IOperator Operator { get; set; }
         public string Property { get; set; }
         protected double[] Expected { get; set; }
-        public bool ToAnalyze { get; }
+        public bool ToAnalyze { get; set;}
         protected List<SegmentCondition> TrueConditions;
         protected double FailPoint { get; set; }
 
         public bool Passed { get; set; }
 
-        protected SegmentCondition(double start, double start_tolerance, double end, double end_tolerance, string property, double[] expected, bool analyze=false, SegmentType segmentType = SegmentType.Distance)
+        private void Initialize(double start, double start_tolerance, double end, double end_tolerance, string property, double[] expected, bool analyze, SegmentType segmentType)
         {
             Start = start;
             Start_Tolerance = start_tolerance;
             End = end;
             End_Tolerance = end_tolerance;
+            Time_Tolerance = 0;
             
             if (start > end) {
                 throw new ArgumentException($"start delimiter ({start}) greater than end delimiter ({end})");
@@ -38,6 +40,16 @@ namespace TestFramework
             Passed = true;
             TrueConditions = new List<SegmentCondition>();
             FailPoint = double.MinValue;
+        }
+
+        protected SegmentCondition(double start, double end, double time_tolerance, string property, double[] expected, bool analyze=false, SegmentType segmentType = SegmentType.Distance)
+        {
+            Initialize(start, 0, end, 0, property, expected, analyze, segmentType);
+            Time_Tolerance = time_tolerance;
+        }
+        protected SegmentCondition(double start, double start_tolerance, double end, double end_tolerance, string property, double[] expected, bool analyze=false, SegmentType segmentType = SegmentType.Distance)
+        {
+            Initialize(start, start_tolerance, end, end_tolerance, property, expected, analyze, segmentType);
         }
 
         public virtual void Check()

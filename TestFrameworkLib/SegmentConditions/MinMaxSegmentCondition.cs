@@ -8,6 +8,12 @@ namespace TestFramework
             Operator = new MinMaxOperator();
         }
 
+        public MinMaxSegmentCondition(double start, double end, double time_tolerance, string property, double[] expected, bool analyze=false, SegmentType segmentType = SegmentType.Distance) 
+        : base(start, end, time_tolerance, property, expected, analyze, segmentType)   
+        {
+            Operator = new MinMaxOperator();
+        }
+
         public override string GenerateFailMessage(double lhs)
         {
             return $"Fail ({FailPoint}{TypeMeasuringUnit()}): Expected '{Property}' {Operator.Symbol()} ({Expected[0]}, {Expected[1]}), Got: {lhs}";

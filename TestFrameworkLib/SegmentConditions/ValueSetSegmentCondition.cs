@@ -14,6 +14,13 @@ namespace TestFramework
             Operator = new ValueSetOperator(DoubleCompareTolerance);
         }
 
+        public ValueSetSegmentCondition(double start, double end, double time_tolerance, string property, double[] expected, bool analyze=false, SegmentType segmentType = SegmentType.Distance) 
+        : base(start, end, time_tolerance, property, expected, analyze, segmentType)  
+        {
+            DoubleCompareTolerance = 1e-6;
+            Operator = new ValueSetOperator(DoubleCompareTolerance);
+        }
+
         public override string GenerateFailMessage(double lhs)
         {
             var expected_values = "[" + string.Join(", ", Expected) + "]";
