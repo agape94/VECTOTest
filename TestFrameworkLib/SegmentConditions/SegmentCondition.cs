@@ -174,9 +174,9 @@ namespace TestFramework
         }
 
         public virtual string GenerateFailMessage(double lhs) =>
-            $"Fail ({FailPoint}{TypeMeasuringUnit()}): Expected '{Property}' {Operator.Symbol()} {Expected}, Got: {lhs}";
+            $"Fail ({FailPoint}{TypeMeasuringUnit()}): Expected '{Property}' {Operator.Symbol()} {Expected[0]}, Got: {lhs}";
 
         public virtual string GeneratePassMessage(double lhs) =>
-            $"Pass: Expected '{Property}' {Operator.Symbol()} {Expected}. Got: {lhs}";
+            $"Pass: Expected '{Property}' {Operator.Symbol()} {Expected[0]}. Got: {lhs}";
     }
 }
