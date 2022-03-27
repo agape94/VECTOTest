@@ -56,11 +56,11 @@ namespace SampleUnitTests
             // ==================================================================================
 
             // With tolerances, doing analysis
-            TC(100, 50, 2000, 0, ModFileHeader.v_act, Operator.Analyze_Equals, 150),
-            TC(100, 50, 2000, 0, ModFileHeader.Gear, Operator.Analyze_MinMax, (100, 250)),
-            TC(100, 50, 2000, 0, ModFileHeader.v_act, Operator.Analyze_MinMax, (100, 250)),
-            TC(100, 50, 2000, 0, ModFileHeader.Gear, Operator.Analyze_ValueSet, new[]{0, 1, 2, 3}),
-            TC(200, 50, 1000, 0, ModFileHeader.Gear, Operator.Analyze_ValueSet, new[]{1, 2, 3})
+            TC(100, 50, 2000, 0, ModFileHeader.v_act, Operator.Analyze_Equals),
+            TC(100, 50, 2000, 0, ModFileHeader.Gear, Operator.Analyze_MinMax),
+            TC(100, 50, 2000, 0, ModFileHeader.v_act, Operator.Analyze_MinMax),
+            TC(100, 50, 2000, 0, ModFileHeader.Gear, Operator.Analyze_ValueSet),
+            TC(200, 50, 1000, 0, ModFileHeader.Gear, Operator.Analyze_ValueSet)
         );
 
         // [Test]
@@ -107,11 +107,11 @@ namespace SampleUnitTests
                 new TC(condition(Engine on/off, ... any boolean from the modfile), )
                  
 
-                Tolerances (based on vehicle speed)
+                Tolerances (based on vehicle speed) -> done
 
-                Remove parameters of Analyze functions (make them optional)
+                Remove parameters of Analyze functions (make them optional) -> done
 
-                Fix output bug in the exception messages(!) System.Double instead of actual number
+                Fix output bug in the exception messages(!) System.Double instead of actual number -> done
 
                 Maybe have a TC function that gets two lambda expressions and whenever the
                 first one holds, the second one must hold as well.

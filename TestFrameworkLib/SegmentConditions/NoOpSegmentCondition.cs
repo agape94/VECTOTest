@@ -5,7 +5,7 @@ namespace TestFramework
         public NoOpSegmentCondition() 
         : base(0, 0, 0, 0, "", new double[]{})  
         {
-            Operator = new EqualsOperator();
+            throw new System.Exception("Invalid segment condition!");
         }
     
 
