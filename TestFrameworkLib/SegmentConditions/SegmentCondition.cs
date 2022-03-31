@@ -42,6 +42,11 @@ namespace TestFramework
             FailPoint = double.MinValue;
         }
 
+        protected SegmentCondition()
+        {
+            Initialize(0, 0, 0, 0, "", new double[]{}, false, SegmentType.Distance);
+        }
+
         protected SegmentCondition(double start, double end, double time_tolerance, string property, double[] expected, bool analyze=false, SegmentType segmentType = SegmentType.Distance)
         {
             Initialize(start, 0, end, 0, property, expected, analyze, segmentType);

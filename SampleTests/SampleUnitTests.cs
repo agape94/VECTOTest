@@ -10,7 +10,7 @@ namespace SampleUnitTests
         public void Test1() => RunTestCases(@"mod_files/CityBus_AT_PS_RegionalDelivery.vmod",
             
             // No tolerances, no analysis
-            TC(100, 2000, ModFileHeader.v_act, Operator.Equals, 150),
+            TC(100, 2000, ModFileHeader.v_act, Operator.Equals, 111),
             TC(100, 2000, ModFileHeader.Gear, Operator.MinMax, (100, 250)),
             TC(100, 2000, ModFileHeader.v_act, Operator.MinMax, (100, 250)),
             TC(100, 2000, ModFileHeader.Gear, Operator.ValueSet, new[]{0, 1, 2, 3}),
@@ -19,17 +19,17 @@ namespace SampleUnitTests
             // ==================================================================================
 
             // No tolerances, doing analysis
-            TC(100, 2000, ModFileHeader.v_act, Operator.Analyze_Equals, 150),
-            TC(100, 2000, ModFileHeader.Gear, Operator.Analyze_MinMax, (100, 250)),
-            TC(100, 2000, ModFileHeader.v_act, Operator.Analyze_MinMax, (100, 250)),
-            TC(100, 2000, ModFileHeader.Gear, Operator.Analyze_ValueSet, new[]{0, 1, 2, 3}),
-            TC(200, 1000, ModFileHeader.Gear, Operator.Analyze_ValueSet, new[]{1, 2, 3}),
+            TC(100, 2000, ModFileHeader.v_act, Operator.Analyze_Equals),
+            TC(100, 2000, ModFileHeader.Gear, Operator.Analyze_MinMax),
+            TC(100, 2000, ModFileHeader.v_act, Operator.Analyze_MinMax),
+            TC(100, 2000, ModFileHeader.Gear, Operator.Analyze_ValueSet),
+            TC(200, 1000, ModFileHeader.Gear, Operator.Analyze_ValueSet),
 
 
             // ==================================================================================
             
             // With time based tolerance, no analysis
-            TC(100, 2000, 1, ModFileHeader.v_act, Operator.Equals, 150),
+            TC(100, 2000, 1, ModFileHeader.v_act, Operator.Equals, 130),
             TC(100, 2000, 2, ModFileHeader.Gear, Operator.MinMax, (100, 250)),
             TC(100, 2000, 3, ModFileHeader.v_act, Operator.MinMax, (100, 250)),
             TC(100, 2000, 4, ModFileHeader.Gear, Operator.ValueSet, new[]{0, 1, 2, 3}),
@@ -38,7 +38,7 @@ namespace SampleUnitTests
             // ==================================================================================
             
             // With tolerances, no analysis
-            TC(100, 50, 2000, 0, ModFileHeader.v_act, Operator.Equals, 150),
+            TC(100, 50, 2000, 0, ModFileHeader.v_act, Operator.Equals, 140),
             TC(100, 50, 2000, 0, ModFileHeader.Gear, Operator.MinMax, (100, 250)),
             TC(100, 50, 2000, 0, ModFileHeader.v_act, Operator.MinMax, (100, 250)),
             TC(100, 50, 2000, 0, ModFileHeader.Gear, Operator.ValueSet, new[]{0, 1, 2, 3}),
@@ -47,11 +47,11 @@ namespace SampleUnitTests
             // ==================================================================================
             
             // With time based tolerance, no analysis
-            TC(100, 2000, 1, ModFileHeader.v_act, Operator.Analyze_Equals, 150),
-            TC(100, 2000, 2, ModFileHeader.Gear, Operator.Analyze_MinMax, (100, 250)),
-            TC(100, 2000, 3, ModFileHeader.v_act, Operator.Analyze_MinMax, (100, 250)),
-            TC(100, 2000, 4, ModFileHeader.Gear, Operator.Analyze_ValueSet, new[]{0, 1, 2, 3}),
-            TC(200, 1000, 5, ModFileHeader.Gear, Operator.Analyze_ValueSet, new[]{1, 2, 3}),
+            TC(100, 2000, 1, ModFileHeader.v_act, Operator.Analyze_Equals),
+            TC(100, 2000, 2, ModFileHeader.Gear, Operator.Analyze_MinMax),
+            TC(100, 2000, 3, ModFileHeader.v_act, Operator.Analyze_MinMax),
+            TC(100, 2000, 4, ModFileHeader.Gear, Operator.Analyze_ValueSet),
+            TC(200, 1000, 5, ModFileHeader.Gear, Operator.Analyze_ValueSet),
 
             // ==================================================================================
 
@@ -60,7 +60,9 @@ namespace SampleUnitTests
             TC(100, 50, 2000, 0, ModFileHeader.Gear, Operator.Analyze_MinMax),
             TC(100, 50, 2000, 0, ModFileHeader.v_act, Operator.Analyze_MinMax),
             TC(100, 50, 2000, 0, ModFileHeader.Gear, Operator.Analyze_ValueSet),
-            TC(200, 50, 1000, 0, ModFileHeader.Gear, Operator.Analyze_ValueSet)
+            TC(200, 50, 1000, 0, ModFileHeader.Gear, Operator.Analyze_ValueSet),
+
+            TC((dataRow) => { return dataRow[ModFileHeader.Gear] == 0;} , (dataRow) => {return dataRow[ModFileHeader.v_act] == 0;})
         );
 
         // [Test]

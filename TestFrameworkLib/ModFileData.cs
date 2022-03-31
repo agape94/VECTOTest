@@ -17,6 +17,11 @@ namespace TestFramework
 			m_Data = new List<DataRow>();
 		}
 
+		public List<DataRow> getWholeData() 
+		{
+			return m_Data;
+		}
+
 		public DataRow getRowAt(double position, SegmentType positionType=SegmentType.Distance)
 		{
 			var columnName = positionType == SegmentType.Distance ? ModFileHeader.dist : ModFileHeader.time;

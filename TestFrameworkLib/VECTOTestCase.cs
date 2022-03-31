@@ -17,9 +17,7 @@ namespace TestFramework
             m_Data = new ModFileData();
             m_Conditions = new List<SegmentCondition>();
             m_Passed = true;
-
             Assert.True(m_Data.ParseCsv(jobname));
-
             foreach (var sc in segmentConditions) {
                 try {
                     if(sc.Time_Tolerance != 0)
@@ -27,7 +25,14 @@ namespace TestFramework
                         sc.Start_Tolerance = ComputeTolerance(sc.Start, sc.Time_Tolerance, sc.Type);
                         sc.End_Tolerance = ComputeTolerance(sc.End, sc.Time_Tolerance, sc.Type);
                     }
-                    sc.Data = m_Data.GetTestData(sc.Start + sc.Start_Tolerance, sc.End - sc.End_Tolerance, sc.Property, sc.Type);
+                    if(sc is LamdaExpressionsSegmentCondition)
+                    {
+                        sc.Data = m_Data.getWholeData();
+                    }
+                    else
+                    {
+                        sc.Data = m_Data.GetTestData(sc.Start + sc.Start_Tolerance, sc.End - sc.End_Tolerance, sc.Property, sc.Type);
+                    }
                     m_Conditions.Add(sc);
                 } catch (Exception e) {
                     Console.Error.WriteLine(e.ToString());
@@ -280,6 +285,14 @@ namespace TestFramework
             return SegmentConditionFactoryMethod(start, start_tolerance, end, end_tolerance, property, op, Array.ConvertAll<int, double>(value_set, x => x), sg);
         }
 
+        public static SegmentCondition TC(
+            Func<DataRow, bool> firstExpression,
+            Func<DataRow, bool> secondExpression
+        )
+        {
+            return SegmentConditionFactoryMethod(firstExpression, secondExpression);
+        }
+
         // ===============================================================================================
         // factory methods
 
@@ -296,19 +309,19 @@ namespace TestFramework
             switch(op)
             {
                 case Operator.Analyze_Lower:
-                    sc = new LowerThanSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new double[]{}, analyze:true, segmentType:sg);
+                    sc = new LowerThanSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new double[]{0}, analyze:true, segmentType:sg);
                     break;
                 case Operator.Analyze_Greater:
-                    sc = new GreaterThanSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new double[]{}, analyze:true, segmentType:sg);
+                    sc = new GreaterThanSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new double[]{0}, analyze:true, segmentType:sg);
                     break;
                 case Operator.Analyze_Equals:
-                    sc = new EqualsToSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new double[]{}, analyze:true, segmentType:sg);
+                    sc = new EqualsToSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new double[]{0}, analyze:true, segmentType:sg);
                     break;
                 case Operator.Analyze_MinMax:
-                    sc = new MinMaxSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new double[] {}, analyze: true, segmentType:sg);
+                    sc = new MinMaxSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new double[] {0}, analyze: true, segmentType:sg);
                     break;
                 case Operator.Analyze_ValueSet:
-                    sc = new ValueSetSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new double[] {}, analyze: true, segmentType:sg);
+                    sc = new ValueSetSegmentCondition(start_val, start_tolerance, end_val, end_tolerance, property, new double[] {0}, analyze: true, segmentType:sg);
                     break;
                 default:
                     sc = new NoOpSegmentCondition();
@@ -329,19 +342,19 @@ namespace TestFramework
             switch(op)
             {
                 case Operator.Analyze_Lower:
-                    sc = new LowerThanSegmentCondition(start_val, end_val, time_tolerance, property, new double[]{}, analyze:true, segmentType:sg);
+                    sc = new LowerThanSegmentCondition(start_val, end_val, time_tolerance, property, new double[]{0}, analyze:true, segmentType:sg);
                     break;
                 case Operator.Analyze_Greater:
-                    sc = new GreaterThanSegmentCondition(start_val, end_val, time_tolerance, property, new double[]{}, analyze:true, segmentType:sg);
+                    sc = new GreaterThanSegmentCondition(start_val, end_val, time_tolerance, property, new double[]{0}, analyze:true, segmentType:sg);
                     break;
                 case Operator.Analyze_Equals:
-                    sc = new EqualsToSegmentCondition(start_val, end_val, time_tolerance, property, new double[]{}, analyze:true, segmentType:sg);
+                    sc = new EqualsToSegmentCondition(start_val, end_val, time_tolerance, property, new double[]{0}, analyze:true, segmentType:sg);
                     break;
                 case Operator.Analyze_MinMax:
-                    sc = new MinMaxSegmentCondition(start_val, end_val, time_tolerance, property, new double[] {}, analyze: true, segmentType:sg);
+                    sc = new MinMaxSegmentCondition(start_val, end_val, time_tolerance, property, new double[] {0}, analyze: true, segmentType:sg);
                     break;
                 case Operator.Analyze_ValueSet:
-                    sc = new ValueSetSegmentCondition(start_val, end_val, time_tolerance, property, new double[] {}, analyze: true, segmentType:sg);
+                    sc = new ValueSetSegmentCondition(start_val, end_val, time_tolerance, property, new double[] {0}, analyze: true, segmentType:sg);
                     break;
                 default:
                     sc = new NoOpSegmentCondition();
@@ -419,6 +432,14 @@ namespace TestFramework
             }
 
             return sc;
+        }
+
+        private static SegmentCondition SegmentConditionFactoryMethod(
+            Func<DataRow, bool> firstExpression,
+            Func<DataRow, bool> secondExpression
+        )
+        {
+            return new LamdaExpressionsSegmentCondition(firstExpression, secondExpression);
         }
     }
 }
