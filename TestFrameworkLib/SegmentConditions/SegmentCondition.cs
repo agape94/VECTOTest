@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace TestFramework
 {
@@ -59,16 +60,17 @@ namespace TestFramework
 
         public virtual void Check()
         {
-            if(ToAnalyze)
-            {
-                Analyze();
-                return;
-            }
-            
             foreach (var dataLine in Data) {
                 try {
                     FailPoint = dataLine[TypeColumnName()];
-                    Operator.Apply(dataLine[Property], Expected, GenerateFailMessage(dataLine[Property]));
+                    if(!ToAnalyze)
+                    {
+                        Operator.Apply(dataLine[Property], Expected, GenerateFailMessage(dataLine[Property]));
+                    }
+                    else
+                    {
+                        Assert.That(false);
+                    }
                 } catch (Exception) {
                     Passed = false;
                     Analyze();

@@ -2,7 +2,7 @@ using NUnit.Framework;
 using TestFramework;
 
 [TestFixture]
-class UnitTests : VECTOTestCase
+class UnitTests : VECTOTest
 {
     [Test]
     public void Test1() => RunTestCases(@"mod_files/CityBus_AT_PS_RegionalDelivery.vmod",

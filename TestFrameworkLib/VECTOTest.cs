@@ -4,13 +4,13 @@ using System.IO;
 using System;
 namespace TestFramework
 {
-    public class VECTOTestCase
+    public class VECTOTest
     {
         private List<SegmentCondition> m_Conditions;
         private static ModFileData m_Data;
         private bool m_AllPassed;
 
-        public VECTOTestCase() {}
+        public VECTOTest() {}
 
         public void RunTestCases(string jobname, params SegmentCondition[] segmentConditions)
         {
