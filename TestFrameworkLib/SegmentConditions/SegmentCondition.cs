@@ -59,6 +59,12 @@ namespace TestFramework
 
         public virtual void Check()
         {
+            if(ToAnalyze)
+            {
+                Analyze();
+                return;
+            }
+            
             foreach (var dataLine in Data) {
                 try {
                     FailPoint = dataLine[TypeColumnName()];

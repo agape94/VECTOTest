@@ -8,7 +8,7 @@ namespace TestFramework
     {
         private List<SegmentCondition> m_Conditions;
         private static ModFileData m_Data;
-        private bool m_Passed;
+        private bool m_AllPassed;
 
         public VECTOTestCase() {}
 
@@ -16,7 +16,7 @@ namespace TestFramework
         {
             m_Data = new ModFileData();
             m_Conditions = new List<SegmentCondition>();
-            m_Passed = true;
+            m_AllPassed = true;
             Assert.True(m_Data.ParseCsv(jobname));
             foreach (var sc in segmentConditions) {
                 try {
@@ -34,34 +34,17 @@ namespace TestFramework
                         sc.Data = m_Data.GetTestData(sc.Start + sc.Start_Tolerance, sc.End - sc.End_Tolerance, sc.Property, sc.Type);
                     }
                     m_Conditions.Add(sc);
+                    sc.Check();
+                    sc.PrintResults();
+                    if(!sc.Passed && m_AllPassed)
+                    {
+                        m_AllPassed = false;
+                    }
                 } catch (Exception e) {
                     Console.Error.WriteLine(e.ToString());
                 }
             }
-
-            CheckOrAnalyzeSegmentConditions();
             PrintResults();
-        }
-
-        public void CheckOrAnalyzeSegmentConditions()
-        {
-            foreach (var segmentCondition in m_Conditions) {
-                if(!segmentCondition.ToAnalyze)
-                {
-                    segmentCondition.Check();
-                }
-                else
-                {
-                    segmentCondition.Analyze();
-                }
-
-                segmentCondition.PrintResults();
-
-                if(!segmentCondition.Passed && m_Passed)
-                {
-                    m_Passed = false;
-                }
-            }
         }
 
         public static double ComputeTolerance(double position, double toleranceSeconds, SegmentType st = SegmentType.Distance)
@@ -77,7 +60,7 @@ namespace TestFramework
 
         private void PrintResults()
         {
-            if(!m_Passed)
+            if(!m_AllPassed)
             {
                 Console.WriteLine("✗ Some test cases failed. Corrected test cases: ");
             }
