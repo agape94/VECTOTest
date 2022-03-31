@@ -62,7 +62,14 @@ namespace SampleUnitTests
             TC(100, 50, 2000, 0, ModFileHeader.Gear, Operator.Analyze_ValueSet),
             TC(200, 50, 1000, 0, ModFileHeader.Gear, Operator.Analyze_ValueSet),
 
-            TC((dataRow) => { return dataRow[ModFileHeader.Gear] == 0;} , (dataRow) => {return dataRow[ModFileHeader.v_act] == 0;})
+            TC(
+                (dataRow) => { 
+                    return dataRow[ModFileHeader.Gear] == 0; 
+                } , 
+                (dataRow) => { 
+                    return dataRow[ModFileHeader.v_act] == 0; 
+                }
+            )
         );
 
         // [Test]
