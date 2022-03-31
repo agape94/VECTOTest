@@ -117,7 +117,7 @@ namespace SampleUnitTests
 
                 Maybe have a TC function that gets two lambda expressions and whenever the
                 first one holds, the second one must hold as well.
-                Both get a data row as a parameter and return a bool
+                Both get a data row as a parameter and return a bool -> done
 
                 Integration in VECTO (!)
                     Provide a few examples (basically adapt one or two test files to the new framework)
