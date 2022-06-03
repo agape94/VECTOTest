@@ -1,25 +1,17 @@
 using NUnit.Framework;
 using System;
 
-namespace TestFramework
+namespace TUGraz.VectoCore.Tests.TestFramework
 {
     public class ValueSetOperator : IOperator
     {
-        private double DoubleCompareTolerance;
-        public ValueSetOperator() 
-        {
-            DoubleCompareTolerance = 1e-6;
-        }
-
-        public ValueSetOperator(double tolerance) 
-        {
-            DoubleCompareTolerance = tolerance;
-        }
+        public ValueSetOperator() {}
 
         public void Apply(double lhs, double[] rhs, string errorMessage = "")
         {
+            double epsilon = 0.0000001;
             Assert.That(rhs.Length, Is.GreaterThan(0));
-            Assert.True(Array.Exists(rhs, element => Math.Abs(lhs - element) <= DoubleCompareTolerance), errorMessage);
+            Assert.True(Array.Exists(rhs, element => Math.Abs(lhs - element) <= epsilon), errorMessage);
         }
 
         public string Symbol()

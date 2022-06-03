@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace TestFramework
+namespace TUGraz.VectoCore.Tests.TestFramework
 {
     public class GreaterOperator : IOperator
     {
@@ -8,8 +8,9 @@ namespace TestFramework
 
         public void Apply(double lhs, double[] rhs, string errorMessage = "")
         {
+            double epsilon = 0.0000001;
             Assert.That(rhs.Length, Is.EqualTo(1));
-            Assert.That(lhs, Is.GreaterThan(rhs[0]), errorMessage);
+            Assert.That(lhs, Is.GreaterThan(rhs[0] - epsilon), errorMessage);
         }
 
         public string Symbol()

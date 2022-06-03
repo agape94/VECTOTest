@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace TestFramework
+namespace TUGraz.VectoCore.Tests.TestFramework
 {
     public class NoOperator : IOperator
     {

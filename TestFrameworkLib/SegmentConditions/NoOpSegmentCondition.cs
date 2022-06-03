@@ -1,9 +1,10 @@
-namespace TestFramework
+using TUGraz.VectoCore.Models.Simulation.Data;
+namespace TUGraz.VectoCore.Tests.TestFramework
 {
     public class NoOpSegmentCondition : SegmentCondition
     {
         public NoOpSegmentCondition() 
-        : base(0, 0, 0, 0, "", new double[]{})  
+        : base(0, 0, 0, 0, 0, "", ModalResultField.INVALID, new NoOperator(), new double[]{}, false, SegmentType.Distance)  
         {
             throw new System.Exception("Invalid segment condition!");
         }

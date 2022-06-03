@@ -1,7 +1,10 @@
 using System;
+using System.Data;
 using NUnit.Framework;
+using TUGraz.VectoCore.Models.Simulation.Data;
+using TUGraz.VectoCommon.Utils;
 
-namespace TestFramework
+namespace TUGraz.VectoCore.Tests.TestFramework
 {
     public class LamdaExpressionsSegmentCondition : SegmentCondition
     {
@@ -14,31 +17,62 @@ namespace TestFramework
             m_SecondExpression = expression_2;
         }
 
-        public override void Check()
+        protected override void PreCheck(ref ModalResults data)
         {
+            if(DonePreCheck)
+            {
+                return;
+            }
+            Assert.That(Start_Adjusted, Is.LessThanOrEqualTo(End_Adjusted));
+            Data = data.AsEnumerable();
+            DonePreCheck = true;
+        }
+
+
+        public override void Check(ref ModalResults data)
+        {
+            PreCheck(ref data);
             foreach (var dataLine in Data) {
+                FailPoint = dataLine.Field<SI>(ModalResultField.dist.GetName()).Value();
                 try {
-                    FailPoint = dataLine[TypeColumnName()];
                     if(m_FirstExpression(dataLine) == true)
                     {
                         Assert.That(m_SecondExpression(dataLine) == true);
                     }
-                } catch (Exception) {
+                } catch (AssertionException) 
+                {
                     Passed = false;
-                    Analyze();
                     break;
                 }
             }
         }
 
-        public override void Analyze()
+        public override void Analyze(ref ModalResults data)
         {
             return;
+        }
+
+        public override void PrintCorrectConditions(string prefix = "", string suffix = "")
+        {
+            return;
+        }
+
+        public override void PrintResults(string prefix = "\t*", string suffix = "")
+        {
+            Console.WriteLine("{0} -> {1}", ToString(), Passed ? "✔ Pass" : "✗ Fail");
+            if(!Passed)
+            {
+                Print(prefix:"\t* ");
+            }
+        }
+
+        public override void Print(string prefix = "", string suffix = "")
+        {
+            Console.WriteLine($"{prefix}Lambda expression failed at position: {FailPoint} m{suffix}");
         }
 
         public override string ToString()
         {
             return "Lambda expression";
         }
-    };
-}
+    }}

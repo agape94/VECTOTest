@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace TestFramework
+namespace TUGraz.VectoCore.Tests.TestFramework
 {
     public class MinMaxOperator : IOperator
     {
@@ -16,8 +16,10 @@ namespace TestFramework
                 rhs[1] = tmp;
             }
 
-            Assert.That(lhs, Is.GreaterThan(rhs[0]), errorMessage);
-            Assert.That(lhs, Is.LessThan(rhs[1]), errorMessage);
+            double epsilon = 0.0000001;
+
+            Assert.That(lhs, Is.GreaterThanOrEqualTo(rhs[0] - epsilon), errorMessage);
+            Assert.That(lhs, Is.LessThanOrEqualTo(rhs[1] + epsilon), errorMessage);
         }
 
         public string Symbol()

@@ -1,5 +1,5 @@
 
-namespace TestFramework
+namespace TUGraz.VectoCore.Tests.TestFramework
 {
     public interface IOperator
     {
